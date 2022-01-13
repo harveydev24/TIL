@@ -2,6 +2,10 @@
 
 ## Git
 - 분산 버전 관리 시스템
+- 세 단계로 구성
+    1. working directory
+    2. staging area
+    3. repository
 
 ## Github
 - 원격 저장소
