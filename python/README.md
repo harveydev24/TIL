@@ -879,6 +879,7 @@
     ```python
     def multiply(x, y):
         return x * y
+    
     ```
 
 - 모듈(Module)
