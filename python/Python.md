@@ -116,7 +116,10 @@
   - 다음의 키워드(keywords)는 예약어(reserved words)이므로 사용할 수 없음
 
     ```python
-    False, None, True, and, as, assert, async, await, break, class, continue, def, del, elif, else, except, finally, for, from, global, if, import, in, is, lambda, nonlocal, not, or, pass, raise, return, try, while, with, yield
+    False, None, True, and, as, assert, async, await, break, 
+    class, continue, def, del, elif, else, except, finally, 
+    for, from, global, if, import, in, is, lambda, nonlocal, 
+    not, or, pass, raise, return, try, while, with, yield
     ```
 
   - 내장함수나 모듈 등의 이름도 사용 불가
