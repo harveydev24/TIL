@@ -900,6 +900,251 @@
 
 
 
+## 조건문
+
+- `True / False` 를 판단할 수 있는 조건식과 함께 사용
+
+- expression에는 `True / False` 에 대한 조건식
+
+  - 조건이 `True` 인 경우 이후 들여쓰기 되어 있는 코드 블럭 실행
+
+  - 조건이 여러개인 경우 `elif` 사용
+
+  - 이외의 경우 `else` 이후 들여쓰기 되어 있는 코드 블럭을 실행
+
+    ```python
+    if <expression>:
+        # Code block
+    elif <expression>:
+        # Code block
+    else:
+        # Code block
+    ```
+
+- 조건문은 중첩 가능
+
+  ```python
+  if <expression>:
+      # Code block
+      if <expression>:
+          # Code block
+      else:
+          # Code block
+  ```
+
+- 조건 표현식
+
+  - 조건 표현식을 일반적으로 조건에 따라 값을 정할 때 활용
+
+  - 삼항 연산자로 부르기도 함
+
+    ```python
+    <True인 경우 값> if <expression> else <False인 경우 값>
+    
+    # 다음의 코드를
+    num = 2
+    if num % 2:
+        result = '홀수'
+    else:
+        result = '짝수'
+    print(result)
+    
+    # 다음과 같이 간단하게 바꿀 수 있다.
+    result = '홀수' if num % 2 else '짝수'
+    print(result)
+    ```
+
+
+
+## 반복문
+
+- 특정 조건을 도달할 때 까지, 계속 반복되는 일련의 문장
+
+- `while` 문
+
+  - 조건이 참인 경우 들여쓰기 되어 있는 코드 블록 실행
+
+  - 이후 다시 조건식을 검사하며 반복적으로 실행
+
+  - 무한 루프를 방지하기 위해 종료 조건 반드시 필요
+
+    ```python
+    while <expression>:
+        # Code block
+    ```
+
+- `for` 문
+
+  - 시퀀스를 포함한 순회 가능한 객체 요소를 모두 순회함
+
+    - `string, list, tuple, dict, range, enumerate`
+
+  - 처음부터 끝까지 모두 순회하므로 별도의 종료 조건 필요 없음
+
+    ```python
+    for <변수명> in <iterable>:
+        # Code block
+    else: # else는 선택사항
+        # Code block
+    ```
+
+    - 딕셔너리는 기본적으로 key를 순회함
+
+      ```python
+      grades = {'john': 80, 'eric': 90}
+      for student in grades:
+          print(student)
+      '''
+      john
+      eric
+      '''
+      
+      print(grades.keys())
+      # dict_keys(['john', 'eric'])
+      
+      print(greades.values())
+      # dict_keys([80, 90])
+      
+      print(grades.items())
+      # dict_items([('john', 80), ('eric', 90)])
+      ```
+
+  - `enumerate` 순회
+
+    - 인덱스와 객체를 쌍으로 담은, (index, value) 형태의 tuple로 구성된 객체 열거형(enumerate) 객체 반환
+
+    ```python
+    members = ['민수', '영희', '철수']
+    for idx, member in enumerate(members):
+        print(idx, member)
+    '''
+    0 민수
+    1 영희
+    2 철수
+    '''
+    
+    # 시작값 지정 가능
+    for idx, member in enumerate(members, start = 1):
+        print(idx, member)
+    '''
+    1 민수
+    2 영희
+    3 철수
+    '''
+    ```
+
+    
+
+  - List Comprehension
+
+    - 표현식과 제어문을 통해 특정한 값을 가진 리스트를 간결하게 생성
+
+      ```python
+      [<expression> for <변수> in <iterable>]
+      [<expression> for <변수> in <iterable> if <조건식>]
+      
+      # 1~3의 세제곱 리스트
+      cubic_list = []
+      for number in range(1, 4):
+          cubic_list.append(number ** 3)
+      cubic_list
+      # [1, 8, 27]
+      
+      [number ** 3 for number in range(1, 4)]
+      # [1, 8, 27]
+      ```
+
+  - Dictionary Comprehension
+
+    - 표현식과 제어문을 통해 특정한 값을 가진 딕셔너리를 간결하게 생성
+
+      ```python
+      {key: value for <변수> in <iterable>}
+      {key: value for <변수> in <iterable> if <조건식>}
+      
+      # 1~3의 세제곱 딕셔너리
+      cubic_dict = {}
+      for number in range(1, 4):
+          cubic_dict[number] = number ** 3
+      cubic_dict
+      # {1: 1, 2: 8, 3: 27}
+      
+      cubic_dict = {key: number ** 3 for number in range(1, 4)}
+      ```
+
+ - 반복문 제어
+
+   - `break`
+
+     - 반복문을 종료
+
+       ```python
+       n = 0
+       while True:
+           if n == 3:
+               break
+           print(n)
+           n += 1
+       '''
+       0
+       1
+       2
+       '''
+       ```
+
+   - `continue`
+
+     - 이후의 코드 블록은 실행하지 않고, 다음 반복 수행
+
+       ```python
+       for i in range(6):
+           if i % 2 == 0:
+               continue
+           print(i)
+       '''
+       1
+       3
+       5
+       '''
+       ```
+
+   - `pass`
+
+     - 아무것도 하지 않음
+
+     - 특별히 할 일 없을 때 자리를 채우는 용도
+
+     - 반복문 아니여도 사용 가능
+
+       ```python
+       for i in range(5):
+           if i == 3:
+               pass
+           print(i)
+       ```
+
+   - else
+
+     - 끝까지 반복문을 실행한 이후에 else문 실행
+
+       ```python
+       for char in 'apple':
+           if char == 'b':
+               print('b')
+               break
+       else:
+           print('b가 없습니다.')
+       # b가 없습니다.
+       ```
+
+       
+
+   
+
+
+
+
+
 
 
 
