@@ -1349,7 +1349,7 @@
 
          ```python
          def family(**kwargs):
-             for key, value in kwargs:
+             for key, value in kwargs.items():
                  print(key, ":", value)
          
          family(father='John', mother='Jane', me='John Jr.')
@@ -1548,6 +1548,9 @@
       이 함수는 foo입니다.
       """
   ```
+
+
+- `help(function_name)` 으로 함수의 설명을 출력할 수 있음
 
 - Naming Convention
 
