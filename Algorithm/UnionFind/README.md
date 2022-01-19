@@ -31,7 +31,16 @@
       return a
   ```
 
+- 좀 더 간단하게 다음과 같이 쓸 수도 있음
 
+  ```python
+  def findParent(a):
+      if parent[a] != a:
+          parent[a] = find(Parent(parent[a]))
+      return parent[a]
+  ```
+
+  
 
 ## Union
 
@@ -45,7 +54,19 @@
           parent[a] = b
   ```
 
+- 순서가 중요할 경우 다음과 같이 구현할 수도 있음
 
+  ```python
+  def union(a, b):
+      a = find(a)
+      b = find(b)
+      if a <= b:
+          parent[b] = a
+      else:
+          parent[a] = b
+  ```
+
+  
 
 ## 관련문제
 
