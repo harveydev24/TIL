@@ -1123,9 +1123,9 @@
            print(i)
        ```
 
-   - else
+   - `else`
 
-     - 끝까지 반복문을 실행한 이후에 else문 실행
+     - 끝까지 반복문을 실행한 이후에 `else`문 실행
 
        ```python
        for char in 'apple':
@@ -1139,7 +1139,554 @@
 
        
 
-   
+
+## 함수(Function)
+
+### 함수의 정의
+
+- 특정한 기능을 하는 코드의 조각(묶음)
+
+- 특정 명령을 수행하는 코드를 매번 다시 작성하지 않고, 필요 시에만 호출하여 간편하게 사용
+
+- **재사용성, 가독성,** 그리고 **생산성**
+
+- 파이썬에는 기본적으로 내장 함수가 존재
+
+  ```python
+  print(), sum(), max(), min(), len(), ...
+  ```
+
+- 구현되어 있는 함수가 없는 경우, 직접 함수 작성
+
+  ```python
+  def function_name(parameter):
+      # Code block
+      return returning_value
+  ```
+
+
+
+### 선언과 호출
+
+- 함수의 선언은 `def` 키워드 이용
+
+- 들여쓰기를 통해 Function body(Code block) 작성
+
+- 함수는 parameter를 넘겨줄 수 있음
+
+- 동작 후에 `return` 을 통해 결과를 전달
+
+- 함수는 함수명()으로 호출
+
+  - parameter가 있는 경우, 함수명(값1, 값2, ...)로 호출
+
+    ```python
+    # foo()로 호출
+    def foo():
+        return True
+    
+    # add(x, y)로 호출
+    def add(x, y):
+        return x, y
+    ```
+
+
+
+### 함수의 결과값(Output)
+
+- 결과값에 따른 함수의 종류
+
+  - Void function
+
+    - 명시적인 `return` 값이 없는 경우, `None` 을 반환하고 종료
+
+      ```python
+      print('hello')
+      # hello
+      ```
+
+  - Value returning function
+
+    - 함수 실행 후, `return` 문을 통해 값 반환
+
+    - `return` 을 통해 값 반환 후 함수가 바로 종료됨
+
+      ```python
+      float('3.14')
+      ```
+
+- 결과값을 여러개 반환하고 싶을 경우, 튜플을 사용
+
+  ```python
+  def minus_and_product(x, y):
+      return x - y, x * y
+  
+  result = minus_and_product(4, 5)
+  result
+  # (-1, 20)
+  ```
+
+
+
+### 함수의 입력(Input)
+
+- Parameter
+
+  - 함수를 실행할 때, 함수 내부에서 사용되는 식별자
+
+    ```python
+    def function_name(parameter):
+        return parameter
+    ```
+
+    
+
+- Argument
+
+  - 함수를 호출 할 때, 함수의 parameter를 통해 전달되는 값
+
+    ```python
+    function_name('argument')
+    ```
+
+  - 필수 Argument
+
+    - 반드시 전달되어야 하는 argument
+
+  - 선택 Argument
+
+    - 값을 전달하지 않아도 되는 경우 기본 값이 전달
+
+  - Positional Argument
+
+    - 기본적으로 함수 호출 시, argument는 위치에 따라 함수 내에 전달됨
+
+      ```python
+      def add(x, y):
+          return x + y
+      add(2, 3)
+      '''
+      def add(x, y):
+      	x, y = 2, 3
+      	return x + y
+      '''
+      ```
+
+  - Keyword Arguments
+
+    - 변수의 이름으로 특정 argument를 전달할 수 있음
+
+    - Keyword argument 다음에 positional argument를 활용할 수 없음
+
+      ```python
+      def add(x, y):
+          return x + y
+      
+      add(x=2, y=5)
+      # 7
+      
+      add(2, y=5)
+      # 7
+      
+      add(y=5, 2)
+      # SyntaxError
+      ```
+
+  - Default Arguments Values
+
+    - 기본값을 지정하여 함수 호출 시 argument 값을 설정하지 않도록 함
+
+      - 정의된 것 보다 더 적은 개수의 argument들로 호출 될 수 있음
+
+        ```python
+        def add(x, y=0):
+        	return x + y
+        
+        add(2)
+        '''
+        def add(x, y=0):
+        	x, y = 2, 0
+        	return x + y
+        '''
+        ```
+
+      - 다음과 같이 함수를 정의할 수 없음
+
+        ```python
+        def add(x=0, y):
+            return x + y
+        ```
+
+  - Positional Arguments Packing/Unpacking
+
+    - 연산자 `*`
+
+      - 여러 개의 positional argument를 하나의 필수 parameter로 받아서 사용
+
+      - 몇 개의 positional argument를 받을지 모르는 함수를 정의할 때 유용
+
+        ```python
+        def add(*args):
+            sum = 0
+            for arg in args:
+                sum += arg
+            print(sum)
+        
+        add(2)
+        # 2
+        
+        add(2, 3, 4, 5)
+        # 14
+        ```
+
+   - Keyword Arguments Packing/Unpacking
+
+     - 연산자 `**`
+
+       - 여러개의 keyword argument를 하나의 필수 parameter로 받아서 사용
+
+       - Argument들은 딕셔너리로 묶여 처리됨
+
+         ```python
+         def family(**kwargs):
+             for key, value in kwargs:
+                 print(key, ":", value)
+         
+         family(father='John', mother='Jane', me='John Jr.')
+         ```
+
+
+
+### 함수의 범위(Scope)
+
+- 함수는 코드 내부에 local scope를 생성하며, 그 외 공간인 global scope로 구분
+
+- scope
+
+  - built-in scope
+    - 정의된 variable이 파이썬이 실행된 이후부터 영원히 유지
+  - global scope
+    - 코드 어디에서든 참조할 수 있는 공간
+    - global variable 정의
+      - 모듈이 호출된 시점 이후 혹은 인터프리터가 끝날 때까지 유지
+
+  - local scope
+
+    - 함수가 만든 scope이며 함수 내부에서만 참조 가능
+
+    - local variable 정의
+
+      - 함수가 호출될 때 생성되고, 함수가 종료될 때까지 유지
+
+        ```python
+        def func():
+            a = 20
+            print(a)
+            
+        func()
+        print(a)
+        # NameError
+        ```
+
+- 이름 검색 규칙(Name Resolution)
+
+  - 파이썬에서 사용되는 이름(식별자)들은 이름공간(namespace)에 저장되어 있음
+
+  - 다음의 순서로 이름을 찾아 나감(LEGB Rule)
+
+    1. Local scope
+
+       - 함수
+
+    2. Enclosed scope
+
+       - 특정 함수의 상위 함수
+
+    3. Global scope
+
+       - 함수 밖의 변수, Import 모듈
+
+    4. Built-in scope
+
+       - 파이썬 안에 내장되어 있는 함수 또는 속성
+
+         ```python
+         a = 0
+         b = 1
+         
+         def enclosed():
+             a = 10
+             c = 3
+             def local(c):
+                 print(a, b, c)
+             local(300)
+             print(a, b, c)
+         enclosed()
+         print(a, b)
+         
+         '''
+         10 1 300
+         10 1 3
+         0 1
+         '''
+         
+         print(sum)
+         print(sum(range(2)))
+         sum = 5
+         print(sum)
+         print(sum(range(2)))
+         
+         '''
+         <built-in function sum>
+         1
+         5
+         TypeError
+         global scope의 sum 변수에 5가 할당되었고, 이것이 built-in scope의 내장 함수 sum 보다 먼저 탐색됨
+         '''
+         ```
+
+  - 함수 내에서는 바깥 scope의 변수에 접근은 가능하나, 기본적으로 수정은 불가
+    - 값을 할당하면 해당 scope의 namespace에 변수가 새롭게 생성되기 때문
+    - 수정을 위해서는 `global`, `nonlocal` 이용
+      - 코드가 복잡해지면 변수의 변경을 추적하기 어렵고 오류 발생하기 쉬움
+      - 가급적 사용하지 않는 것이 좋으며, 함수로 값을 바꾸고자 한다면 argument로 넘기고 리턴 값을 사용
+
+  
+
+- `global` 문
+
+  - 현재 코드 블록 전체에 적용되며, 나열된 식별자(이름)이 global variable임을 나타냄
+
+    ```python
+    a = 0
+    
+    def func()
+    	global a
+        a = 3
+    
+    func()
+    print(a)
+    # 3
+    ```
+
+  - `global` 에 나열된 이름은 같은 코드 블록에서 `global` 앞에 등장할 수 없음
+
+    ```python
+    a = 10
+    
+    def func():
+        print(a)
+        global a
+        a = 3
+        
+    print(a)
+    func()
+    print(a)
+    # SyntaxError
+    ```
+
+  - `global` 에 나열된 이름은 parameter, `for` 루프 대상, 클래스, 함수 등으로 정의되지 않아야 함
+
+    ```python
+    a = 10
+    
+    def func(a):
+        global a
+        a = 3
+    
+    print(a)
+    func()
+    print(a)
+    # SyntaxError
+    ```
+
+- `nonlocal` 문
+
+  - `global` 을 제외하고 가장 가까운(둘러 싸고 있는) scope의 변수를 연결
+
+  - `nonlocal` 에 나열된 이름은 같은 코드 블록에서 `nonlocal` 앞에 등장할 수 없음
+
+  - `nonlocal` 에 나열된 이름은 parameter, `for` 루프 대상, 클래스, 함수 등으로 정의되지 않아야 함
+
+  - `global` 과 달리 이미 존재하는 이름과의 연결만 가능
+
+    ```python
+    def func():
+        global out
+        out = 3
+        
+    func()
+    print(out)
+    # 3
+    
+    def func():
+        def func2():
+            nonlocal y
+            y = 2
+        func2()
+        print(y)
+    
+    func()
+    # SyntaxError
+    ```
+
+- 범위 확인하기
+  - `globals()`
+    - global, local, built-in 정보 모두 dict 형태로 리턴
+  - `locals()`
+    - 실행되어지는 함수 내의 local namespace를 dict 형태로 리턴
+
+
+
+### 함수의 문서화(Doc-String)
+
+- 함수나 클래스의 설명
+
+  ```python
+  def foo():
+      """
+      이 함수는 foo입니다.
+      """
+  ```
+
+- Naming Convention
+
+  - 좋은 함수와 parameter 이름을 짓는 방법
+
+    - 상수 이름은 영문 전체를 대문자
+    - 클래스 및 예외의 이름은 각 단어의 첫 글자만 영문 대문자
+    - 이 외 나머지는 소문자 또는 밑줄로 구분한 소문자 사용
+    - 스스로를 설명
+    
+      - 함수 이름만으로 역할을 파악 가능
+    
+      - 어떤 기능을 수행하는 지, 결과 값으로 무엇을 반환 하는 지
+    - 약어 사용 지양
+
+
+
+### 함수 응용
+
+- 내장 함수(Built-in Functions)
+
+  - 파이썬에는 항상 사용할 수 있는 많은 함수와 형(type)이 내장되어 있음
+
+  - `map(function, iterable)`
+
+    - 순회 가능한 데이터의 모든 요소에 함수를 적용하고 그 결과를 map object로 반환
+
+      ```python
+      numbers = [1, 2, 3]
+      result = map(str, nubmers)
+      print(result, type(result))
+      # <map object at 0x~~~> <class 'map'>
+      
+      list(result)
+      # ['1', '2', '3']
+      ```
+
+  - `filter(function, iterable)`
+
+    - 순회 가능한 데이터의 모든 요소에 함수를 적용하고 그 결과가 `True`인 것들을 filter object로 반환
+
+      ```python
+      def odd(n):
+          return n % 2
+      
+      numbers = [1, 2, 3]
+      result = filter(odd, numbers)
+      print(result, type(result))
+      # <filter object at 0x~~~> <class 'filter'>
+      
+      list(result)
+      # [1, 3]
+      ```
+
+  - `zip(*iterables)`
+
+    - 복수의 iterable을 모아 튜플을 원소로 하는 zip object 반환
+
+      ```python
+      girls = ['jane', 'ashley']
+      boys = ['justin', 'eric']
+      pair = zip(girls, boys)
+      print(pair, type(pari))
+      # <zip object at 0x~~~> <class 'zip'>
+      
+      list(pair)
+      # [('jane', 'justin'), ('ashley', 'eric')]
+      ```
+
+  - `lambda`
+
+    - 표현식을 계산한 결과값을 반환하는 함수로, 이름이 없는 함수여서 익명함수라고도 불림
+
+      ```python
+      def triangle(b, h):
+          return 0.5 * b * h
+      triangle(5, 6)
+      # 15.0
+      
+      triangle = lambda b, h: 0.5 * b * h
+      triangle(5, 6)
+      # 15.0
+      ```
+
+    - 특징
+
+      - `return` 문을 가질 수 없음
+      - 간편 조건문 외의 조건문이나 반복문을 가질 수 없음
+
+    - 장점
+
+      - 함수를 정의해서 사용하는 것 보다 간결
+      - `def` 를 사용할 수 없는 곳에서도 사용 가능
+
+- 재귀 함수(Recursive Function)
+
+  - 자기 자신을 호출하는 함수
+
+    ```python
+    def factorial(n):
+        if n == 0 or n == 1:
+            return 1
+        else:
+            return n * factorial(n-1)
+    
+    factorial(4)
+    # 24
+    ```
+
+    
+
+  - 무한한 호출을 목표로 하는 것이 아니며, 알고리즘 설계 및 구현에서 유용하게 활용
+
+    - 알고리즘 중 점화식과 같이 재귀 함수로 로직을 표현하기 쉬운 경우가 있음
+    - 변수의 사용이 줄어들며, 코드의 가독성이 높아짐
+
+  - 1개 이상의 base case(종료되는 상황)가 존재하고, 수렴하도록 작성
+
+  - 주의 사항
+
+    - 재귀 함수는 base case에 도달할 때 까지 함수를 호출함
+
+    - 메모리 스택이 넘치게 되면(stack overflow) 프로그램이 동작하지 않게 됨
+
+    - 파이썬에서는 최대 재귀 깊이(maximum recursion depth)가 1,000번으로, 호출 횟수가 이를 넘어가게 되면 RecursionError 발생
+
+      - 다음의 코드로 최대 재귀 깊이 제한을 늘릴 수 있음
+
+        ```python
+        import sys
+        limit_number = 15000
+        sys.setrecursionlimit(limit_number)
+        ```
+
+    - 입력 값이 커질 수록 연산 속도가 오래 걸림
+
+
+
+
 
 
 
