@@ -91,7 +91,51 @@
 
 ## 고급 정렬 알고리즘
 
+### 1. 병합 정렬
 
+- 입력을 반으로 나누고, 전반부와 후반부를 독립적으로 정렬한 뒤 병합한다.
+
+  ```python
+  def mergeSort(A):
+      if len(A) == 1: return A
+      mid = len(A)//2
+      front = mergeSort(A[:mid])
+      back = mergeSort(A[mid:])
+      return merge(front, back)
+  
+  
+  def merge(front, back):
+      tmp = []
+      idxFront = 0
+      idxBack = 0
+  
+      while idxFront < len(front) and idxBack < len(back):
+          if front[idxFront] <= back[idxBack]:
+              tmp.append(front[idxFront])
+              idxFront += 1
+          else:
+              tmp.append(back[idxBack])
+              idxBack += 1
+      
+      while idxFront < len(front):
+          tmp.append(front[idxFront])
+          idxFront += 1
+      
+      while idxBack < len(back):
+          tmp.append(back[idxBack])
+          idxBack += 1
+      
+      return tmp
+  ```
+
+- 시간 복잡도는 O(nlog~2~ n)
+
+  - T(n)은 n개의 원소를 병합정렬하는데 걸리는 시간
+  - T(n)은 전반부와 후반부를 정렬하는데 필요한 2T(n/2)과, 병합하는 시간 cn의 합과 같음
+
+  ![](README.assets/KakaoTalk_20220120_235930605.jpg)
+
+​	![](../../../Desktop/KakaoTalk_20220120_235930605_01.jpg)
 
 
 
