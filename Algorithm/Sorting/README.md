@@ -135,7 +135,41 @@
 
   ![](README.assets/KakaoTalk_20220120_235930605.jpg)
 
-​	![](../../../Desktop/KakaoTalk_20220120_235930605_01.jpg)
+![](README.assets/KakaoTalk_20220120_235930605_02-16428589045971.jpg)
+
+
+
+### 2. 퀵 정렬
+
+- 평균적으로 가장 좋은 성능을 가져 가장 많이 쓰는 정렬 알고리즘
+
+- 기준 원소를 고른 뒤, 이를 중심으로 더 작거나 같은 수는 왼쪽으로, 큰 수는 오른쪽으로 재배치함
+
+- 분할된 왼쪽과 오른쪽 부분에 대해 재귀적으로 정렬을 수행함
+
+  ```python
+  def quickSort(A):
+      if not A: return []
+      criterion = A[-1]
+      left = []
+      right = []
+      for idx, item in enumerate(A):
+          if idx == len(A)-1: break
+          if item <= criterion: left.append(item)
+          else: right.append(item)
+      left = quickSort(left)
+      right = quickSort(right)
+      return left + [criterion] + right
+  
+  ```
+
+- 시간 복잡도는 O(nlog~2~ n)
+
+
+
+### 3. 힙 정렬
+
+​                                          
 
 
 
