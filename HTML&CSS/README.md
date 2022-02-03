@@ -217,5 +217,225 @@
 
 
 
-- 
+- form
 
+  - 정보(데이터)를 서버에 제출하기 위한 영역
+
+  - form의 기본 속성
+
+    - action
+
+      - form을 처리할 서버의 URL
+
+    - method
+
+      - form을 제출할 때 사용할 HTTP 메서드(GET or POST)
+
+        
+
+
+- input
+  - 다양한 타입을 가지는 입력
+  - ionput의 속성
+    -  name
+      - form control에 적용되는 이름
+    - value
+      - form control에 적용되는 값
+    - required, readonly, autofocus, aotucomplete, disabled 등
+
+
+
+- input label
+  - label을 클릭하여 input 자체의 초점을 맞추거나 활성화 시킬 수 있음
+  - 웹/모바일 환경에서 편함
+  - input에 id속성을, label에는 for 속성을 활용하여 상호 연관 시킴
+
+
+
+- input type
+
+  |   Type   |                        설명                        |
+  | :------: | :------------------------------------------------: |
+  |   text   |                  일반 텍스트 입력                  |
+  | password |  입력시 값이 보이지 않고 문자를 특수기호 *로 표현  |
+  |  email   |       이메일 형식이 아닌 경우 form 제출 불가       |
+  |  number  | min, max, step 속성을 활용하여 숫자 범위 설정 가능 |
+  |   file   |     accept 속성을 활용하여 파일 타입 지정 가능     |
+  | checkbox |                     다중 선택                      |
+  |  radio   |                     단일 선택                      |
+  |  color   |                     색상 선택                      |
+  |   date   |                        달력                        |
+  |  hidden  |            사용자에게 보이지 않는 input            |
+
+
+
+# CSS
+
+- Cascading Style Sheets
+
+- 스타일을 지정하기 위한 언어
+
+- 선택하고, 지정한다.
+
+- CSS 정의 방법
+
+  - 인라인
+
+  - 내부 참조
+
+  - 외부 참조(link file) - 분리된 CSS 파일
+
+    ```html
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+      <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+      <h1>Hello :></h1>
+    </body>
+    </html>
+    ```
+
+    ```css
+    h1 {
+      color: green;
+      font-size: 200;
+    }
+    ```
+
+
+
+## 선택자(Selector) 유형
+
+- 기본 선택자
+  - 전체 선택자, 요소 선택자
+  - 클래스 선택자, 아이디 선택자, 속성 선택자
+- 결합자(Combinators)
+  - 자손 결합자, 자식 결합자
+  - 일반 형체 결합자, 인접 형제 결합자
+- 의사 클래스/요소(Pseudo Class)
+  - 링크, 동적 의사 클래스
+  - 구조적 의사 클래스, 기타 의사 클래스, 의사 엘리먼트, 속성 선택자
+
+
+
+## CSS 적용 우선순위(cascading order)
+
+1. 인라인
+2. id
+3. class, 속성, pseudo-class
+4. 요소, pseudo-element
+
+
+
+## CSS 상속
+
+- CSS는 상속을 통해 부모 요소의 속성을 자식에게 상속
+
+- 상속되는 속성
+  - Text 관련 요소(font, color, text-align), opacity, visibility 등
+- 상속되지 않는 속성
+  - Box model 관련 요소(width, height, margin, padding, border, box-sizing, display), position 관련 요소(position, top, right, bottom, left, z-index) 등
+
+
+
+## CSS  기본 스타일
+
+### 크기 단위
+
+- px(픽셀)
+  - 모니터 해상도의 한 화소인 '픽셀' 기준
+  - 픽셀의 크기는 변하지 않기 때문에 고정적인 단위
+- %
+  - 백분율 단위
+  - 가변적인 레이아웃에서 자주 사용
+
+- em
+  - 바로 위, 부모 요소에 대한 상속의 영향을 받음
+  - 배수 단위, 요소에 지정된 사이즈에 상대적인 사이즈를 가짐
+  - 1em = 100%
+- rem
+  - 바로 위, 부모 요소에 대한 상속의 영향을 받지 않음
+  - 최상위 요소(html)의 사이즈를 기준으로 배수 단위를 가짐
+  - 1rem = 100%
+
+- viewport
+  - 웹 페이지를 방문한 유저에게 바로 보이게 되는 웹 컨텐츠의 영역 (디바이스 화면)
+  - 디바이스의 viewport를 기준으로 상대적인 사이즈가 결정됨
+  - 1vw, 1vh = viewport widht, height의 1%
+
+
+
+## Box model
+
+- 모든 요소는 네모(박스모델)이고, 위에서부터 아래로, 왼쪽에서 오른쪽으로 쌓인다.
+- 하나의 박스는 네 부분으로 이루어짐
+  - content
+    - 글이나 이미지 등 요소의 실제 내용
+  - padding
+    - 테두리 안쪽의 내부 여백, 요소에 적용된 배경색, 이미지는 padding까지 적용
+  - border
+    - 테두리 영역
+  - margin
+    - 테두리 바깥의 외부 여백, 배경색을 지정할 수 없음
+
+### box-sizing
+
+- 기본적으로 모든 요소의 box-sizing은 content-box
+  - Padding을 제외한 순수 contents 영역만을 box로 지정
+- 다만, 우리가 일반적으로 영역을 볼 때는 border까지의 너비를 100px로 보는 것을 원함
+  - 그 경우 border-box 사용
+
+
+
+## CSS Display
+
+- display: block
+  - 줄 바꿈이 일어나는 요소
+  - 화면 크기 전체의 가로 폭을 차지한다
+  - 블록 레벨 요소 안에 인라인 레벨 요소가 들어갈 수 있음
+- display: inline
+  - 줄 바꿈이 일어나지 않는 행의 일부 요소
+  - content 너비만큼 가로 폭을 차지함
+  - widht, height, margin-top, margin-bottom을 지정할 수 없음
+  - 상하 여백은 line-height로 지정
+- display: inline-block
+  - block과 inline 레벨 요소의 특징을 모두 가짐
+  - inline처럼 한 줄에 표시 가능하고, block 처럼 widht, height, margin 속성을 모두 지정할 수 있음
+- display: none
+  - 해당 요소를 화면에 표시하지 않고, 공간조차 부여되지 않음
+  - 이와 비슷한 visibility: hidden은 해당 요소가 공간은 차지하나 화면에 표시만 하지 않는다.
+
+
+
+## CSS position
+
+- 문서 상에서 요소의 위치를 지정
+- static
+  - 모든 태그의 기본 값(기준 위치)
+  - 일반적인 요소의 배치 순서에 따름(좌측 상단)
+  - 부모 요소 내에서 배치될 때는 부모 요소의 위치를 기준으로 배치됨
+- 다음은 좌표 프로퍼티 top, bottom, left, right를 이용하여 이동 가능
+  - fixed
+    - 고정 위치
+    - 요소를 일반적인 문서 흐름에서 제거 후 레이아웃 공간을 차지하지 않음
+      - normal flow에서 벗어남
+    - 부모 요소와 관계 없이 viewport를 기준으로 이동
+      - 스크롤 시에도 항상 같은 곳에 위치함
+  - absolute
+    - 절대 위치
+    - 요소를 일반적인 문서 흐름에서 제거 후 레이아웃 공간을 차지하지 않음
+      - normal flow에서 벗어남
+    - static이 아닌 가장 가까이 있는 부모/조상 요소를 기준으로 이동
+      - 없는 경우 body 기준
+  - relative
+    - 상대 위치
+    - 자기 자신의 static 위치를 기준으로 이동
+      - normal flow 유지
+    - 레이아웃에서 요소가 차지하는 공간은 static일 때와 같음
+      - normal position 대비 offset
