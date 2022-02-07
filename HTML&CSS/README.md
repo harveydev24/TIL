@@ -293,20 +293,19 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Document</title>
-      <link rel="stylesheet" href="style.css">
+      <style>
+        h1 {
+          color: green;
+          font-size: 200;
+        }</style>
     </head>
     <body>
       <h1>Hello :></h1>
     </body>
     </html>
     ```
-
-    ```css
-    h1 {
-      color: green;
-      font-size: 200;
-    }
-    ```
+    
+    
 
 
 
@@ -439,3 +438,110 @@
       - normal flow 유지
     - 레이아웃에서 요소가 차지하는 공간은 static일 때와 같음
       - normal position 대비 offset
+
+
+
+## Float
+
+- 박스를 왼쪽 혹은 오른쪽으로 이동시켜 텍스트를 포함 인라인 요소들이 주변을 wrapping 하도록 함
+- 요소가 normal flow를 벗어나게 함
+- 속성
+  - none
+    - 기본값
+  - left
+    - 요소를 왼쪽으로 띄움
+  - right
+    - 요소를 오른쪽으로 띄움
+
+- clearfix
+
+  - float의 공간을 임의로 만들어주기 위해 사용
+
+  - clear를 통해 float를 지워줌
+
+    ```html
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+      <style>
+        .box1 {
+          width: 10rem;
+          height: 10rem;
+          border: 1px solid aqua;
+          background-color: red;
+        }
+    
+        .box2 {
+          width: 20rem;
+          height: 10rem;
+          border: 1px solid aqua;
+          background-color: blue;
+        }
+    
+        .left {
+          float: left;
+        }
+    
+        .clearfix::after {
+          content: "";
+          clear: both;
+          display: block;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="clearfix">
+        <div class="box1 left">box1</div>
+      </div>
+      <div class="box2">box2</div>
+     </body>
+    </html>
+    ```
+
+    
+
+## Flex-box
+
+- 행과 열 형태로 아이템들을 배치하는 1차원 레이아웃 모델
+- 수동으로 값을 지정하지 않고 수직 정렬 및 아이템의 너비와 높이 혹은 간격을 동일하게 배치
+- 축
+  - main axis (메인 축)
+  - cross axis (교차 축)
+- 구성 요소
+  - Flex Container (부모 요소)
+    - flexbox 레이아웃을 형성하는 가장 기본적인 요소
+    - Flex Item들이 놓여있는 영역
+    - display 속성을 flex 혹은 inline-flex로 지정
+  - Flex Item (자식 요소)
+    - 컨테이너에 속해 있는 컨텐츠(박스)
+
+- 속성
+  - flex-direction 
+    - main-axis 방향 지정
+    - row, row-reverse, column, column-reverse
+  - flex-wrap
+    - 아이템이 컨테이너를 벗어나는 경우 해당 영역 내에 배치되도록 설정
+    - nowrap (기본 값)
+      - 한 줄에 배치
+    - wrap
+      - 넘치면 그 다음줄로 배치
+  - justify-content
+    - main-axis 기준으로 공간 배분
+  - align-content
+    - cross-aix 기준으로 공간 배분
+  - 이 외 정렬 속성 다수
+
+
+
+
+
+
+
+
+
+
+
