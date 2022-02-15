@@ -53,3 +53,15 @@
 
 
 
+## 세 줄 요약
+
+1. `[start, end]`가 `check(start) != check(end)`가 되도록 구간을 설정
+2. `while start+1<end`일 동안, `check(mid) == check(end)`라면 `start = mid`, 아니라면 `end = mid`
+3. 구한 경계에서 답이 `start`인지 `end`인지 생각해보고 출력
+
+
+
+## 참고 링크
+
+[정리글](https://www.acmicpc.net/blog/view/109)
+
