@@ -5,7 +5,7 @@
   - 어떤 값의 최대, 최솟값을 구하는 문제
 - 결정 문제
   - 답이 Yes or No로 갈리는 문제
-- 최적화 문제를 결정 문제로 바꾸었을 때, 결정문제 답의 분포가` False,False,...,False,True,True,...,True`와 같이 두 구간으로 나뉘는 경우에만 이분탐색 사용 가능
+- 최적화 문제를 결정 문제로 바꾸었을 때, 결정문제 답의 분포가` False,False,...,False,True,True,...,True`와 같이 두 구간(반대 경우도 가능)으로 나뉘는 경우에만 이분탐색 사용 가능
 
 
 
@@ -49,7 +49,7 @@
   - `while` 문 내부에서는 `start+1 < end` 이므로, `start < mid < end` 가 항상 성립
   - 위 두 조건에 의해 `while` 문 탈출 직후는 항상 `start+1 = end` 성립
   - `while` 문 내부의 조건문에 따라서 `start` 는 항상 `False` 이고, `end` 는 항상 `True` 임
-  - 즉, `False, False, ..., False, True, ..., True, True`에서 False가 True가 되는 순간이 start와 end.
+  - 즉, `False, False, ..., False, True, ..., True, True`에서 `False`가 `True`가 되는 순간이 `start`와 `end`.
 
 
 
