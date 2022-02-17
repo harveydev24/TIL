@@ -79,3 +79,6 @@
   ```
 
   ![image-20220217170656904](README.assets/image-20220217170656904.png)
+
+ - j를 matched_length라고 생각
+ - p[j-1] 값이 다시 matched_length가 됨!!
