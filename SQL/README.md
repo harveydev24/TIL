@@ -35,6 +35,9 @@
   
   SELECT 컬럼1, 컬럼2, 컬럼3 FROM 테이블명
   
+  SELECT 컬럼1, 컬럼2, 컬럼3 FROM 테이블명 ORDER BY 컬럼1 ASC
+  SELECT 컬럼1, 컬럼2, 컬럼3 FROM 테이블명 ORDER BY 컬럼1 DESC
+  
   # 중복 제거
   SELECT DISTINCT 컬럼1 FROM 테이블명
   
@@ -135,4 +138,5 @@
   SELECT 컬럼1, 컬럼2 FROM 테이블1 UNION SELECT 컬럼1, 컬럼2 FROM 테이블2
   ```
 
-  
+
+
