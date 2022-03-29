@@ -191,7 +191,7 @@
   
     - allow us to name, and therefore to refer to, the results of relational-algebra expressions
   
-      ![image-20220328184631558](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328184631558.png)
+      ![image-20220328184631558](README.assets/image-20220328184631558.png)
 
 
 
@@ -206,25 +206,25 @@
 
      - 아래 여섯가지 표현으로 다른 모든 관계를 표현할 수 있음
 
-       ![image-20220328185925886](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328185925886.png)
+       ![image-20220328185925886](README.assets/image-20220328185925886.png)
 
        - Set-Intersection
 
-         ![image-20220328190051070](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328190051070.png)
+         ![image-20220328190051070](README.assets/image-20220328190051070.png)
 
        - Natural-Join
 
-         ![image-20220328190323688](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328190323688.png)
+         ![image-20220328190323688](README.assets/image-20220328190323688.png)
 
          - properties
 
-           ![image-20220328190752428](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328190752428.png)
+           ![image-20220328190752428](README.assets/image-20220328190752428.png)
 
        - Assignment Operation
 
-         ![image-20220328190908857](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328190908857.png)
+         ![image-20220328190908857](README.assets/image-20220328190908857.png)
 
-         ![image-20220328191114081](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328191114081.png)
+         ![image-20220328191114081](README.assets/image-20220328191114081.png)
 
 
 
@@ -240,11 +240,11 @@
 
   - Create Table Construct
 
-    ![image-20220328192134821](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328192134821.png)
+    ![image-20220328192134821](README.assets/image-20220328192134821.png)
 
     - Domain Types in SQL
 
-      ![image-20220328192300752](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328192300752.png)
+      ![image-20220328192300752](README.assets/image-20220328192300752.png)
 
     - Integrity Constraints in create table
 
@@ -252,16 +252,16 @@
 
       - primary key는 not null과 unique한 속성을 가짐
 
-        ![image-20220328192622256](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328192622256.png)
+        ![image-20220328192622256](README.assets/image-20220328192622256.png)
 
-        ![image-20220328193232253](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328193232253.png)
+        ![image-20220328193232253](README.assets/image-20220328193232253.png)
 
         - takes 테이블의 primary key에서 sec_id를 제거하면, 학생은 한 학기에 sec_id가 다른 똑같은 수업을 듣지 못하게 된다.
         - primary key는 유니크 해야하고 이 때문에 CS 001 강좌와 CS 002 강좌를 구분할 수 없기 때문에 둘 중 하나만 테이블에 넣을 수 있다.
 
   - Drop Table
 
-    ![image-20220328193616043](/Users/jinhwankim/Desktop/TIL/DB/README.assets/image-20220328193616043.png)
+    ![image-20220328193616043](README.assets/image-20220328193616043.png)
 
 - DML
 
