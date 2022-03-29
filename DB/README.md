@@ -232,6 +232,8 @@
 
 - Structured Query Language
 
+- based on set and relational operations with certain modifications and enhancements
+
 - 70년대 초에 IBM에서 만듦
 
 - DDL
@@ -267,7 +269,94 @@
 
   - 데이터를 조작
 
+  - SELECT
   
+    ![image-20220329160358903](README.assets/image-20220329160358903.png)
+  
+    ![image-20220329160418758](README.assets/image-20220329160418758.png)
+  
+    ![image-20220329160516054](README.assets/image-20220329160516054.png)
+  
+  - WHERE
+  
+    ![image-20220329160631944](README.assets/image-20220329160631944.png)
+  
+  - FROM
+  
+    ![image-20220329160756895](README.assets/image-20220329160756895.png)
+  
+  - JOINS
+  
+    ![image-20220329161047759](README.assets/image-20220329161047759.png)
+  
+  - Rename operation
+  
+    ![image-20220329161645278](README.assets/image-20220329161645278.png)
+  
+  - String Operation
+  
+    ![image-20220329161938797](README.assets/image-20220329161938797.png)
+  
+  - Ordering
+  
+    ![image-20220329162038855](README.assets/image-20220329162038855.png)
+  
+  - Set Operation
+  
+    ![image-20220329162249101](README.assets/image-20220329162249101.png)
+  
+  - Null Values
+  
+    ![image-20220329162532422](README.assets/image-20220329162532422.png)
+  
+    - Null Values and Three Valued Logic
+  
+      ![image-20220329162739132](README.assets/image-20220329162739132.png)
+  
+    - Aggregate Functions
+  
+      ![image-20220329163556001](README.assets/image-20220329163556001.png)
+  
+      ![image-20220329163809277](README.assets/image-20220329163809277.png)
+  
+      ![image-20220329163938358](README.assets/image-20220329163938358.png)
+  
+  - Null Values and Aggregates
+  
+    ![image-20220329164108296](README.assets/image-20220329164108296.png)
+  
+  - Nested Subqueries
+  
+    - A subquery is a select-from-where expression that is nested within another query
+    - perform tests for set membership, set comparisons, and set cardinality
+  
+    ![image-20220329164324748](README.assets/image-20220329164324748.png)
+  
+    ![image-20220329164827800](README.assets/image-20220329164827800-16485401086361.png)
+  
+    ![image-20220329164902165](README.assets/image-20220329164902165.png)
+  
+    ![image-20220329165238624](README.assets/image-20220329165238624.png)
+  
+    ![image-20220329165432037](README.assets/image-20220329165432037.png)
+  
+    - DELETE
+  
+      ![image-20220329165801231](README.assets/image-20220329165801231.png)
+  
+      ![image-20220329170125001](README.assets/image-20220329170125001.png)
+  
+  - INSERT
+  
+    ![image-20220329170150990](README.assets/image-20220329170150990.png)
+  
+    ![image-20220329170307105](README.assets/image-20220329170307105.png)
+  
+  - UPDATE
+  
+    ![image-20220329171641860](README.assets/image-20220329171641860.png)
+
+
 
 
 
