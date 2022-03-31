@@ -340,11 +340,11 @@
   
     ![image-20220329165432037](README.assets/image-20220329165432037.png)
   
-    - DELETE
+  - DELETE
   
-      ![image-20220329165801231](README.assets/image-20220329165801231.png)
+    ![image-20220329165801231](README.assets/image-20220329165801231.png)
   
-      ![image-20220329170125001](README.assets/image-20220329170125001.png)
+    ![image-20220329170125001](README.assets/image-20220329170125001.png)
   
   - INSERT
   
@@ -355,14 +355,323 @@
   - UPDATE
   
     ![image-20220329171641860](README.assets/image-20220329171641860.png)
+  
+  - Join 
+  
+    ![image-20220330164339698](README.assets/image-20220330164339698.png)
+  
+    - Inner Join
+  
+      ![image-20220330164604981](README.assets/image-20220330164604981.png)
+  
+    - Natural Join
+  
+      ![image-20220330164652709](README.assets/image-20220330164652709.png)
+  
+      ![image-20220330164833154](README.assets/image-20220330164833154.png)
+  
+    - Outer Join
+  
+      ![image-20220330165357914](README.assets/image-20220330165357914.png)
+  
+  - Integrity Constraints
+  
+    - 무결성 규칙(제약)
+  
+    - 데이터 베이스의 데이터들이 지켜야할 조건
+  
+    - Not Null Constraint
+  
+      ![image-20220330170441847](README.assets/image-20220330170441847.png)
+  
+       - The Unique & Primary Key Constraints
+  
+         ![image-20220330170647376](README.assets/image-20220330170647376.png)
+  
+    - The Check Clause
+  
+      ![image-20220330170738101](README.assets/image-20220330170738101.png)
+  
+  - Referential Integrity (Foreign Key Constraints)
+  
+    - 참조 무결성 
+  
+      ![image-20220330170935911](README.assets/image-20220330170935911.png)
+  
+    - Foreign Key가 참조하는 테이블에서 해당 키가 없어질 때
+  
+      ![image-20220330171152861](README.assets/image-20220330171152861.png)
+  
+  - Authorization Specification in SQL
+  
+    ![image-20220330171326238](README.assets/image-20220330171326238.png)
+  
+    ![image-20220330171353429](README.assets/image-20220330171353429.png)
+  
+  - Revoking Authorization in SQL
+  
+    ![image-20220330171422140](README.assets/image-20220330171422140.png)
+  
+  - Authorization-Grant Graph
+  
+    ![image-20220330171602680](README.assets/image-20220330171602680.png)
+  
+    - u1이 revoke되면, u4도 DBA까지의 path가 끊어지므로 revoke됨
+  
+  - Roles
+  
+    ![image-20220330171709096](README.assets/image-20220330171709096.png)
+  
+    
 
 
 
+# DATABASE DESIGN & THE E-R MODEL
+
+- Creating a Database
+
+  - Consider your needs
+    - Report you will need
+    - Inquiries you will want to make
+  - Sketch the table structure
+    - what kind of data is needed in each column
+  - Determine characteristics of field
+    - Field name: Each field must have a unique field name
+    - Field type & length
+      - Character, numeric, date, ...
+  - Create the table
+    - Define each field in the table
+    - Define primary key
+
+- 반드시 중복을 피해야함
+
+  - 저장 공간의 낭비
+
+  - 중복은 inconsistency를 일으킴
+
+    - 아래 테이블에서 Sammi의 전화번호가 바뀌면 수백개의 레코드를 바꿔야할 수 있음
+
+      ![image-20220330172901682](README.assets/image-20220330172901682.png)
+
+- ER Diagram (Entity-Relation Diagram)
+
+  - 시각적으로 데이터 베이스의 구조를 표현
+
+    ![image-20220330173221450](README.assets/image-20220330173221450.png)
+
+  - 이를 토대로 테이블을 만듦
+
+    ![image-20220330173252694](README.assets/image-20220330173252694.png)
 
 
 
+- Database Design
+  - Decide on the DB schema that
+    - is able to hold all information in consideration,
+    - with minimal (or no) redundancy, and allows for effective & efficient data operations
+  - Critical in reducing operations and maintenance costs of SW systems
+- Phase of Database Design
+  - Conceptual design
+    - Construction of an ER schema
+    - to provide an optimal description of the user requirements
+  - Logical design
+    - map onto the implementation data model of the DBMS (such as RDB)
+  - Physical design
+    - specify physical features of the database (issues pertaining to performance rather than information contexts)
+      - index, sequence order, ...
 
+- Entity-Relation Model
 
+  - proposed by P. Chen in 1976
 
+  - A very powerful tool in the design of adatabases
 
+    - simple model
+    - effective means of communication between user, designer, and implementer
 
+  - E-R model is not an implementation model
+
+    - there is no DBMS whose internal structures are based on the E-R model
+
+  - Data Modeling
+
+    - A database can be modeled as
+
+      - a collection of entities
+      - relationships among entities
+
+    - Entity
+
+      - an object that exists and is distinguishable from other objects
+      - entity instance
+        - specific person, company, event, plant, ...
+
+    - Attributes
+
+      - entities have attributes
+        - people have names and addresses
+      - Types of Attributes
+        - Simple attribute
+          - values cannot be divided into subparts
+            - firstname, lastname, phone#
+        - Composite attribute
+          - composed of multiple parts
+            - name = (lastname, firstname)
+            - phone# = (number, extension)
+          - Relational Model의 attribute는 atomic, 즉 simple attribute여야 하는데, compsite attribute가 나온 이유
+            - Conceptual Design 단계에서는 이후 단계는 고려하지 않고 requirements를 E-R Diagram을 이용하여 가장 정확하게 표현해야하기 때문
+        - Null
+          - null value: a special value meaning 'missing' or 'unknown'
+          - some attributes are not allowed to have ull values
+        - Single-valued attribute
+          - each attribute has a single value for an entity
+          - id, name, dept
+        - Multivalued attribute
+          - an attribute may have more than one value for an instance
+          - children = {john, tom}, phone#={5567, 5568}
+        - Deribed attributes
+          - value can be derived from the values of other related attributes or entities
+          - duration, count, sum, ...
+
+    - Entity set
+
+      - a set of entities of the same type that share the same properties
+        - set of all persons, companies, trees, holidays, ...
+
+      - database를 설계하는 것은 결국 entity set을 정의하는 것
+
+  - Relationships
+
+    - relationships are defined between entities
+
+    - Relationship set
+
+      ![image-20220331152247367](README.assets/image-20220331152247367.png)
+
+    - Degree of a Relationship Set
+
+      ![image-20220331153949553](README.assets/image-20220331153949553.png)
+
+    - Mapping Constraints
+
+      - Relationship cardinality
+
+        - Number of entities to which another entity can be associated via a relationship set
+
+      - Generic types
+
+        - 1 : 1 (One to one)
+
+        - 1 : m (One to many)
+
+        - m : 1 (Many to one)
+
+        - m : n (Many to Many)
+
+          ![image-20220331154251693](README.assets/image-20220331154251693.png)
+
+        - 화살표의 끝이 1을 의미
+
+      - Participation of an Entity Set in a Relationship Set
+
+        ​	![image-20220331154711060](README.assets/image-20220331154711060.png)
+
+        - Total participation (double line)
+          - every entity in the entity set participates in at least one relationship in the relationship set
+            - all student must participate in the relationship set
+        - Partial participation (single line)
+          - some entities may not participate in any relationship in the relationship set
+            - participation of instructor in advisor is partial
+
+    - Relationships can have attributes
+
+      ![image-20220331152418842](README.assets/image-20220331152418842.png)
+
+  - E-R Diagrams
+
+    - 같은 Entity set에서 relationship을 가질 수 있음
+
+    ![image-20220331152642412](README.assets/image-20220331152642412.png)
+
+    - Rectangles represent entity sets
+    - Diamonds represent relationship sets
+    - Attributes listed inside entity rectangle
+    - Underline indicates primary key attributes
+
+  - Keys
+
+    - Key for an Entity (Set)
+      - Same as keys in relational models: super key, candidate key, primary key
+      - Set of attributes whose values can distinguish entities from each other
+    - Key for a Relationship (Set)
+      - combination of primary keys of the participating entity set forms a super key
+      - Must consider the mapping cardinality of the relationship set when deciding what are the candidate keys (and primary key)
+
+  - Redundant Attributes
+
+    ![image-20220331172843937](README.assets/image-20220331172843937.png)
+
+    - dept_name in instructor is redundant
+      - since there is an explicit relationship which relates instructors to departments
+      - The attribute replicates information present inthe relationship and should be removed from instructor
+      - BUT: wasn't this a foreign key (which is important in schema diagrams)?!
+        - Relation Model에서는 relationship을 explicit하게 표현할 수 없기 때문에 반드시 foreign key가 필요했다.
+        - 그러나 Entity-Relation Model에서는 relationship을 explicit하게 표현할 수 있기 때문에 foreign key를 없애도 상관 없음
+
+  - Weak Entity Sets
+
+    - An entity set that does not have sufficient attributes to form a primary key
+
+      ![image-20220331173333426](README.assets/image-20220331173333426.png)
+
+      - section 내부에서 전산개론(001.2015.1)과 데이터베이스(001.2015.1)을 구분할 수 없음
+      - 이는 sec_coure라는 relationship으로 구분
+      - section은 course에 dependant함
+      - entity가 course와 관계가 없으면 section 내부에 존재할 수 없음
+        - One to many
+      - The existence of a weak entity set depends on the existence of a identifying entity set
+        - Identifying relationship depicted using a double diamond 
+      - The discriminator (or partial key) of a weak entity set
+        - set of attributes that distinguishes among all the weak entities related to the same strong entity
+      - primary key(of weak entity set) = primary key(of identifying strong entity) + discriminator(of weak entity set)
+
+      ![image-20220331173840398](README.assets/image-20220331173840398.png)
+
+      - 버스 좌석은 1번부터 n번까지 존재
+      - 그러나 좌석 번호만가지고 어떤 버스의 좌석인지 알 수 없음
+      - 따라서 버스와의 relationhip을 통해 구분
+      - 좌석 번호가 discriminator
+
+  - Entended E-R Features
+
+    - Specialization
+
+      ![image-20220331174434502](README.assets/image-20220331174434502.png)
+
+      - subgroupings within an entity set
+      - Sub entities share common attributes
+      - Each sub entity set may have its own specific attributes
+      - 클래스의 상속을 닮음
+      - 위에서부터 아래로 설계
+
+    - Generalization
+
+      - combine a number of entity sets that share the same features into a higher-level entity set
+      - Opposite of specialization
+        - depends on where you start
+      - 아래에서 부터 위로 설계
+
+    - Inheritance
+
+      - The attributes and relationships of the higher-level entity sets are inherited by (applies to) the lower-level entity sets
+
+    - Types of generalization (super-sub entities)
+
+      ![image-20220331174839569](README.assets/image-20220331174839569.png)
+
+      - disjoint vs overlapping
+        - wheter an entity can belong to more than two sub entity set
+      - total vs partial
+        - whether every higher level entity belong to a lower level entity set
+
+      
