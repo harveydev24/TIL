@@ -1,6 +1,6 @@
 # 위상 정렬
 
-- 어떤 일을 하는 순설르 찾는 알고리즘
+- 어떤 일을 하는 순서를 찾는 알고리즘
 - 사이클이 없는 방향 그래프에 존재하는 각 정점들의 선행 순서를 위배하지 않으면서 모든 정점을 나열하는 알고리즘
 
 ​	![img](https://gmlwjd9405.github.io/images/algorithm-topological-sort/topological-sort.png)
