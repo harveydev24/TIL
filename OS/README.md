@@ -1,6 +1,6 @@
 # OS
 
-[Reference: 운영체제, 반효경(이화여대) ](http://www.kocw.or.kr/home/cview.do?mty=p&kemId=1046323)
+Reference: [운영체제, 반효경(이화여대) ](http://www.kocw.or.kr/home/cview.do?mty=p&kemId=1046323)
 
 ---
 
@@ -376,3 +376,164 @@
 ![image-20220426205323933](README.assets/image-20220426205323933.png)
 
 - 프로그램은 실행 후 종료될 때까지, user mode와 kernel mode를 왔다갔다하게 됨
+
+
+
+# 3. Process
+
+## 프로세스의 개념
+
+- "Process is a program in execution"
+- 프로세스의 문맥(context)
+  - 프로세스의 정확한 상태를 규명하기 위해서 필요한 요소들
+  - CPU 수행 상태를 나타내는 하드웨어 문맥
+    - Program Counter
+      - 프로세스 주소공간의 code를 가리킴
+    - 각종 register에 들어있는 값
+  - 프로세스의 주소 공간
+    - code, data, stack
+  - 프로세스 관련 커널 자료 구조
+    - PCB (Process Control Block)
+      - OS가 프로세스를 관리하기 위해 data 영역에 생성
+    - Kernel stack
+      - 프로세스의 시스템 콜에 의해 커널의 함수가 호출
+  - multitasking을 할 때, 이전 프로세스의 문맥을 알고있어야 작업을 이어서 할 수 있음
+
+
+
+## 프로세스의 상태 (Process State)
+
+- 프로세스는 상태(state)가 변경되며 수행됨
+
+  - Running
+
+    - CPU를 잡고 instruction을 수행중인 상태
+
+  - Ready
+
+    - CPU를 기다리는 상태
+      - 메모리 등 다른 조건을 모두 만족한 상태로 대기
+    - Ready 상태에 있는 프로세스들이 번갈아가며 CPU를 잡게 됨
+
+  - Blocked (wait, sleep)
+
+    - CPU를 주어도 당장 instruction을 수행할 수 없는 상태
+    - 프로세스 자신이 요청한 event(I/O 등)가 즉시 만족되지 않아 이를 기다리는 상태
+      - 디스크에서 file을 읽어와야 하는 경우
+
+  - New
+
+    - 프로세스가 생성 중인 상태
+
+  - Terminated
+
+    - 수행(execution)이 끝난 상태
+    - 정리할게 남아있는 상태
+
+    ![image-20220427222004307](README.assets/image-20220427222004307.png)
+
+    ![image-20220427222903960](README.assets/image-20220427222903960.png)
+
+    - Reday queue에 줄 서있는 프로세스들이 CPU를 번갈아 가며 사용
+    - 프로세스가 I/O를 필요로하면, 시스템 콜을 하고 blocked 상대가 되어 해당 장치의 I/O queue에 줄을 서게 됨
+      - 해당 I/O 작업이 끝나면 device controller가 인터럽트를 걸어 I/O의 완료를 알리고, 프로세스는 다시 Ready queue에 들어감
+    - queue는 커널의 주소 공간의 data 영역에 존재
+
+- OS의 상태에 대해서는 이야기 하지 않음
+
+
+
+## Process Control Block (PCB)
+
+- OS가 각 프로세스를 관리하기 위해 프로세스 당 유지하는 정보
+- 구성 요소
+  - OS가 관리상 사용하는 정보
+    - Process state, Process ID
+    - scheduling information, priority
+  - CPU 수행 관련 하드웨어 값
+    - Program counter, registers
+  - 메모리 관련
+    - code, data, stack의 위치 정보
+  - 파일 관련
+    - open file descriptors ...
+- queue에 프로세스를 줄 세울때, 사실은 PCB를 줄 세움
+
+
+
+## 문맥 교환 (Context Switch)
+
+- CPU를 한 프로세스에서 다른 프로세스로 넘겨주는 과정
+
+  - CPU를 내어주는 프로세스의 상태를 그 프로세스의 PCB에 저장
+    - register, program counter, memory map
+  - CPU를 새롭게 얻는 프로레스의 상태를 PCB에서 읽어옴
+
+- 시스템 콜이나 인터럽트 발생 시 반드시 문맥 교환이 일어나는 것이 아님
+
+  ![image-20220427223647257](README.assets/image-20220427223647257.png)
+
+  - (1)의 경우에도 CPU 수행 정보 등 context의 일부를 PCB에 저장해야 하지만, 문맥 교환을 하는 (2)의 경우 그 부담이 훨씬 큼
+    - (2)의 경우 cache memory flush가 필요하여 상당한 오버헤드 발생
+
+
+
+## 프로세스를 스케줄링하기 위한 큐
+
+- Job queue
+  - 현재 시스템 내에 있는 모든 프로세스의 집합
+  - 다른 queue에 있는 프로세스 포함
+- Ready queue
+  - 현재 메모리 내에 있으면서 CPU를 잡아서 실행되기를 기다리는 프로세스의 집합
+- Device queue
+  - I/O device의 처리를 기다리는 프로세스의 집합
+- 프로세스들은 각 큐들을 오가며 수행됨
+
+
+
+## 스케줄러 (Scheduler)
+
+- Long-term scheduler (장기 스케줄러 or job scheduler)
+
+  - 시작 프로세스 중 어떤 것들을 ready queue로 보낼지 결정
+  - 프로세스에 메모리 및 각종 자원을 주는 문제
+  - degree of Multiprogramming을 제어
+    - 메모리에 프로그램을 몇개 올릴 것인지
+  - time sharing system에는 보통 장기 스케줄러가 없음
+    - 어떤 프로그램이 시작되면 곧바로 ready상태로 메모리에 올림
+
+- Short-term scheduler (단기 스케줄러 or CPU scheduler)
+
+  - 어떤 프로세스를 다음번에 running 시킬 지 결정
+  - 프로세스에 CPU를 주는 문제
+  - 충분히 빨라야 함
+    - ms 단위
+
+- Medium-Term scheduler (중기 스케줄러 or swapper)
+
+  - 여유 공간 마련을 위해 프로세스를 통째로 메모리에서 디스크로 쫓아냄
+
+  - 프로세스에서 메모리를 뺏는 문제
+
+  - degree of Multiprogramming을 제어
+
+  - 중기 스케줄러 덕분에 프로세스 상태에 suspended (stopped) 추가
+
+    - 외부적인 이유로 프로세스의 수행이 정지된 상태
+
+    - 프로세스는 통째로 디스크에 swap out 됨
+
+      - 사용자가 프로그램을 일시 정지 시킨 경우
+      - 메모리에 너무 많은 프로세스가 올라와 있을 때 시스템이 프로세스를 잠시 중단시킴
+
+    - blocked의 경우 자신이 요청한 이벤트가 만족되면 ready로 돌아감
+
+    - suspended의 경우 외부에서 resume해 주어야 active한 상태로 돌아갈 수 있음
+
+      ![image-20220427225755074](README.assets/image-20220427225755074.png)
+
+      
+
+
+
+
+
