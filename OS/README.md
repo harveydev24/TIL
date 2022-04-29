@@ -434,7 +434,7 @@ Reference: [운영체제, 반효경(이화여대) ](http://www.kocw.or.kr/home/c
 
     ![image-20220427222903960](README.assets/image-20220427222903960.png)
 
-    - Reday queue에 줄 서있는 프로세스들이 CPU를 번갈아 가며 사용
+    - Ready queue에 줄 서있는 프로세스들이 CPU를 번갈아 가며 사용
     - 프로세스가 I/O를 필요로하면, 시스템 콜을 하고 blocked 상대가 되어 해당 장치의 I/O queue에 줄을 서게 됨
       - 해당 I/O 작업이 끝나면 device controller가 인터럽트를 걸어 I/O의 완료를 알리고, 프로세스는 다시 Ready queue에 들어감
     - queue는 커널의 주소 공간의 data 영역에 존재
@@ -531,7 +531,71 @@ Reference: [운영체제, 반효경(이화여대) ](http://www.kocw.or.kr/home/c
 
       ![image-20220427225755074](README.assets/image-20220427225755074.png)
 
-      
+
+
+
+## Thread
+
+![image-20220429175553463](README.assets/image-20220429175553463.png)
+
+![image-20220429175841239](README.assets/image-20220429175841239.png)
+
+- 스레드는 프로세스 내부의 CPU 수행 단위 
+  - 스레드를 lightweight process라고도 부름
+    - 프로세스를 여러개 두는 것 보다, 한 프로세스에 스레드를 여러개 두는 것이 더 가볍기 때문
+- 스레드의 구성 (CPU 수행과 관련있는 부분)
+  - program counter
+  - register set
+  - stack space
+- 프로세스 내부에서 스레드가 공유하는 부분 (task)
+  - code section
+  - data section
+  - OS resources
+- 다중 스레드로 구성된 태스크 구조에서는 하나의 서버 스레드가 blocked (waiting) 상태인 동안에도 동일한 태스크 내의 다른 스레드가 실행(running) 되어 빠른 처리를 할 수 있다.
+  - 여러개의 스레드를 사용하는 웹 브라우저에서는 한 스레드에서 웹 페이지의 이미지를 읽어올 때, 다른 스레드가 이미 읽어온 텍스트를 화면에 띄울 수 있어서 사용자 입장에서 빠르게 느낌 -> 빠른 응답성
+- 동일한 일을 수행하는 다중 스레드가 협력하여 높은 처리율 (throughput)과 성능 향상을 얻을 수 있음
+  - 동일한 일을 수행하는 프로세스를 여러개 만들면, 각 프로세스 마다 독자적인 주소공간을 만들어야 해서 메모리가 낭비됨 -> 리소스 절약
+- 스레드를 사용하면 병렬성을 높일 수 있음
+  - CPU가 여러개 달린 컴퓨터에서 얻을 수 있는 이점
+
+
+
+## Benefits of Threads
+
+- Responsiveness
+  - 웹브라우저에서 웹서버에 요청을하면 html을 받게 됨
+  - 받은 html에서 다시 이미지들을 읽어와야됨(I/O)
+  - 스레드가 여러개라면, 이미지를 읽어오는 스레드만 blocked되고, 다른 스레드가 html의 텍스트 등을 화면에 띄울 수 있음
+    - I/O를 요청했음에도, 프로세스 자체가 blocked되지 않고 여전히 작동하므로 비동기식 입출력
+- Resource Sharing
+  - 동일한 일을 하는 경우, 프로세스를 여러개 만들면 메모리가 낭비되므로 스레드를 사용하여 리소스를 절약할 수 있음
+- Economy
+  - 프로세스를 생성하는 작업에 비해 스레드를 생성하는 작업은 오버헤드가 작음
+  - 문맥 교환에서의 이점
+- Utillization of MP Architectures
+  - CPU가 여러개 있는 경우의 장점
+  - 각각의 스레드가 서로다른 CPU에서 병렬적으로 작업 가능
+
+
+
+## Implementation of Threads
+
+- Kernel Threads
+  - supported by kernel
+  - OS 커널이 스레드의 존재를 아는 경우
+  - 하나의 스레드에서 다른 스레드로 CPU가 넘어갈 때, 커널이 CPU 스케쥴링 하듯이 넘겨줌
+- User Threads
+  - supported by library
+  - 프로세스 안에 여러 개의 스레드가 있다는 사실을 OS가 모름
+  - 프로세스 자체적으로 내부에 CPU 수행 단위를 여러개 두면서 관리
+    - 약간의 제약이 존재
+- Real-time Threads
+
+
+
+
+
+
 
 
 
