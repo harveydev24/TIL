@@ -593,9 +593,227 @@ Reference: [운영체제, 반효경(이화여대) ](http://www.kocw.or.kr/home/c
 
 
 
+# 4. Process Management
+
+## 프로세스 생성 (Process Creation)
+
+- 부모 프로세스 (Parent process)가 자식 프로세스 (Children process) todtjd
+- 프로세스의 트리 (계층 구조) 형성
+- 프로세스는 자원을 필요로 함
+  - OS로부터 받음
+  - 부모 프로세스와 자원을 공유하는 경우도 있음
+- 자원의 공유
+  - 부모와 자식이 모든 자원을 공유하는 모델
+  - 일부를 공유하는 모델
+  - 전혀 공유하지 않는 모델
+    - 일반적으로 부모와 자식은 서로 CPU와 메모리를 얻기 위해 경쟁
+  - copy-on-write (COW)
+    - 자식이 생성될 때 부모의 program counter register만 카피함
+    - 자식의 data가 변화하면 그 부분은 부모와 더 이상 공유하지 않음
+- 수행 (Execution)
+  - 부모와 자식이 공존하며 수행되는 모델
+  - 자식이 종료 (terminate)될 때 까지 부모가 기다리는(wait, blocked 상태) 모델
+- 주소 공간 (Address space)
+  - 프로세스의 생성은 두 단계를 거침
+    - 자식은 부모의 주소 공간을 복사함
+      - code, data, stack
+      - binary and OS data (PCB)s
+    - 자식은 그 공간에 새로운 프로그램을 올림(덮어 씌움)
+  - 유닉스의 예
+    - `fork()` 시스템 콜이 새로운 프로세스를 생성
+      - 부모를 그대로 복사 (OS data except PID + binary)
+      - 주소 공간 할당
+    - `for()` 다음에 이어지는 `exec()` 시스템 콜을 통해 새로운 프로그램을 메모리에 올림
 
 
 
+## 프로세스 종료 (Process Termination)
+
+- 프로세스가 마지막 명령을 수행한 후 OS에게 이를 알려줌 (exit, 자발적)
+  - 자식이 부모에게 output data를 보냄 (via wait 시스템 콜)
+  - 프로세스의 각종 자원들이 OS에 반납됨
+- 부모 프로세스가 자식의 수행을 종료시킴 (abort, 비자발적)
+  - 자식이 할당 리소스의 한계치를 넘어설 때
+  - 자식에게 할당된 태스크가 더 이상 필요하지 않을 때
+  - 부모가 종료 (exit)하는 경우
+    - OS는 부모 프로세스가 종료하는 경우 자식이 더 이상 수행되지 않도록 함
+    - 손자->자식->부모 순의 단계적인 종료
+
+
+
+## fork() 시스템 콜
+
+```c
+int main() {
+  int pid;
+  pid = fork();
+  // A
+  if (pid == 0) {
+    	printf("\n Hello, I am child!\n");
+  } else if {
+    	printf("\n Hello, Iam parent!\n");
+  }
+}
+```
+
+- create a child (copy)
+- `fork()`를 통해 자식을 만들면, 자식은 주석 A 밑의 코드부터 실행함
+  - 부모 프로세스의 context를 복사했기 때문에 program counter가 가리키고 있는 부분 부터 실행됨
+- 부모와 자식을 구분하기 위해 `fork()` 실행 후의 반환 값이 다름
+  - 부모는 양수, 자식은 0을 가짐
+
+
+
+## `exec()` 시스템 콜
+
+```c
+int main() {
+  int pid;
+  pid = fork();
+  if (pid == 0) {
+    	printf("\n Hello, I am child! Now I'll run data \n");
+  		execlp("/bin/date", "/bin/date", (char *) 0);
+  } else if (pid > 0) {
+    	printf("\n Hello, I am parent!\n");
+  }
+}
+```
+
+- overlay new image
+
+- 자식이 date라는 프로그램으로 덮어씌워짐
+
+- 한 번 `exec()`을 하면 돌아올 수 없음
+
+- 반드시 자식을 만들고 `exec()`할 필요는 없음
+
+  ```c
+  int main() {
+      	printf("\n Hello, I am child! Now I'll run data \n");
+    		execlp("/bin/date", "/bin/date", (char *) 0);
+      	printf("\n Hello, I am parent!\n"); // 이 코드는 영원히 실행되지 않음
+  }
+  ```
+
+
+
+## `wait()` 시스템 콜
+
+![image-20220430185814288](README.assets/image-20220430185814288.png)
+
+- sleep until child is done
+- 프로세스 A가 `wait()` 시스템 콜을 호출하면
+  - 커널은 자식 프로세스가 종료될 때 까지 프로세스 A를 sleep 시킴 (block 상태)
+  - 자식 프로세스가 종료되면, 커널은 프로세스 A를 깨움 (ready 상태)
+- 리눅스의 쉘이 프로세스 A
+  - 커맨드에 다른 프로그램의 이름을 치면 자식 프로세스가 생성되고 `wait()` 시스템 콜
+  - 자식 프로세스가 끝나면 다시 커서가 깜빡거리며 새로운 커맨드를 입력받을 수 있게 됨
+
+
+
+## `exit()` 시스템 콜
+
+- frees all the resources, notify parent
+- 프로세스의 종료
+  - 자발적 종료
+    - 마지막 statement 수행 후 `exit()` 시스템 콜을 통해 종료
+    - 프로그램에 명시적으로 적어주지 않아도 `main` 함수가 리턴되는 위치에 컴파일러가 자동으로 넣어줌
+  - 비자발적 종료
+    - 부모 프로세스가 자식 프로세스를 강제 종료 시킴
+      - 자식 프로세스가 한계치를 넘어서는 리소스 요청
+      - 자식에게 할당된 태스크가 더 이상 필요하지 않음
+    - 키보드로 `kill, break` 등을 입력한 경우
+    - 부모 프로세스가 종료되는 경우
+      - 부모 프로세스가 종료되기 전에 자식 프로세스들이 먼저 종료됨
+
+
+
+## 프로세스 간의 협력
+
+- 독립적 프로세스 (Independent process)
+
+  - 프로세스는 각자의 주소 공간을 가지고 수행되므로 원칙적으로 하나의 프로세스는 다른 프로세스의 수행에 영향을 미치지 못함
+
+- 협력 프로세스 (Cooperating process)
+
+  - 프로세스 협력 메커니즘을 통해 하나의 프로세스가 다른 프로세스의 수행에 영향을 미칠 수 있음
+
+- 프로세스 간 협력 메커니즘 (IPC: Interprocess Communication)
+
+  ![image-20220430191105740](README.assets/image-20220430191105740.png)
+
+  - 메세지를 전달하는 방법 (message passing)
+    - 커널을 통해 메세지 전달
+  - 주소 공간을 공유하는 방법 (shared memory)
+    - 서로 다른 프로세스 간에도 일부 주소 공간을 공유하게 하는 shared memory 메커니즘이 있음
+    - thread의 경우 사실상 하나의 프로세스 내부에 존재하는 것이므로 프로세스 간 협력으로 보기는 어렵지만, 동일한 process를 구성하는 thread들 간에는 주소 공간을 공유하므로 협력이 가능
+
+
+
+### Message Passing
+
+- Message system
+  - 프로세스 사이에 공유 변수 (shared variable)를 일체 사용하지 않고 통신하는 시스템
+  - 메세지는 반드시 커널이 전달
+- Direct Communication
+  - 통신하려는 프로세스의 이름을 명시적으로 표시
+- Indirect Communication
+  - mailbox (또는 port)를 통해 메세지를 간접 전달
+
+
+
+# 5. CPU scheduling
+
+## CPU and I/O Bursts in Program Execution
+
+![image-20220430191340155](README.assets/image-20220430191340155.png)
+
+- 어떤 프로그램이든 실행되면, CPU burst와 I/O burst를 반복함
+  - 빈도는 다름
+    - 사람이 자주 개입하는 프로그램이면 I/O burst의 빈도가 높아짐
+
+
+
+## CPU-burst Time의 분포
+
+![image-20220430191637549](README.assets/image-20220430191637549.png)
+
+- I/O bound job
+  - I/O burst가 많은 job
+    - CPU를 잡고 계산하는 시간보다, I/O에 많은 시간이 필요한 job
+  - many short CPU bursts
+- CPU bound job
+  - CPU만 길게 쓰는 프로그램
+    - 계산 위주의 job
+  - few very ong CPU bursts
+- Interactive job에게 적절한 response 제공 요망
+  - CPU bound job이 CPU를 너무 오래 사용하면, I/O가 많이 필요한 Interactive job의 대기 시간이 길어짐
+
+
+
+
+
+## CPU Scheduler & Dispatcher
+
+- CPU Scheduler
+  - Ready 상태의 프로세스 중에서 이번에 CPU를 줄 프로세스를 고름
+  - OS 내부의 CPU scheduling을 하는 코드
+- Dispatcher
+  - CPU의 제어권을 CPU scheduler에 의해 선택된 프로세스에게 넘기는 코드
+  - 이 과정이 context switch (문맥 교환)
+
+### CPU 스케줄링이 필요한 경우
+
+1. Running -> Blocked
+   - I/O를 요청하는 시스템 콜
+2. Running -> Ready
+   - 할당 시간 만료로 timer interrupt
+3. Blocked -> Ready
+   - I/O 완료 후 인터럽트
+4. Terminate
+
+- 1, 4에서의 스케줄링은 nonpreemptive (강제로 빼앗지 않고 자진 반납)
+- 2, 3에서의 스케줄링은 preemptive (강제로 빼앗음)
 
 
 
