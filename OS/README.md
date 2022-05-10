@@ -817,5 +817,244 @@ int main() {
 
 
 
+## Scheduling Criteria
+
+- CPU utilization (이용률)
+  - keep the CPU as busy as possible
+  - 전체 시간 중 CPU가 일한 시간의 비율
+- Throughput (처리량)
+  - number of processes that complete their execution per time unit
+  - 몇 개의 일을 처리했는지
+- Turnaround time (소요 시간)
+  - amount of time to execute a particular process
+  - CPU를 쓰러 들어와서 작업이 끝나고 나갈때까지 걸린 시간
+- Waiting time (대기 시간)
+  - amount of time a process has been waiting in the ready queue
+  - ready queue에 줄 서서 기다리는 시간의 총합
+- Response time (응답 시간)
+  - amount of time it takes from when a request was submitted until the first response is produced, not ouput
+  - 최초로 CPU를 얻기 까지 걸린 시간
 
 
+
+## Scheduling Algorithm
+
+### FCFS (First-Come First-Served)
+
+- nonpreemtive
+- 프로세스의 도착 순서대로 CPU 할당
+- 긴 프로세스가 도착하면 짧은 프로세스들이 오래 기다려야 하므로 그리 효율적이지 않음
+  - Convoy effect
+- 24->3
+  - average waiting time = 12
+- 3->24
+  - average waiting time = 1.5
+
+
+
+### SJF (Shortest-Job-First)
+
+- 각 프로세스와 다음번 CPU burst time을 가지고 스케쥴링에 활용
+- CPU burst time이 가장 짧은 프로세스를 제일 먼저 스케쥴
+- Nonpreemptive
+  - 일단 CPU를 잡으면 이번 CPU burst가 완료될 때 까지 CPU를 선점 당하지 않음
+- Preemptive
+  - 현재 수행중인 프세스의 남은 burst time보다 더 짧은 CPU burst time을 가지는 새로운 프로세스가 도착하면 CPU를 빼앗김
+  - 이 방법을 Shortest-Remainig-Time-First (SRTF)라고도 부름
+    - SRTF는 주어진 프로세스들에 대해 minimum average waiting time을 보장
+- Starvation
+  - CPU 사용 시간이 긴 프로세스는 대기시간이 매우 길어질 수 있음
+- 다음번 CPU burst time는 추정만이 가능함
+  - 과거의 CPU burst time을 이용하여 추정
+  - t': 추정값, t: 실제값
+  - t'~n+1~ = αt~n~ + (1-α)t'~n~ (0<=α<=1)
+  - -> t'~n+1~ = αt~n~ + (1-α)αt~n-1~ + ... + (1-α)^n+1^t'~0~
+    - 최근 시간의 가중치가 더 큼
+
+
+
+### Priority Scheduling
+
+- 가장 높은 우선 순위(보통 정수값)를 가진 프로세스에게 CPU 할당
+  - 우선 순위는 다양한 방법으로 정할 수 있음
+- SJF도 Priority Scheduling의 일종
+- Starvation
+  - Solution
+    - 대기 시간이 길어지면 우선 순위를 높여주는 Aging을 통해 Starvation을 방지
+- Preemtive
+- Nonpreemtive
+
+
+
+### Round Robin (RR)
+
+- 현대적인 CPU Scheduling
+- 각 프로세스는 동일한 크기와 할당 시간 (time quantum)을 가짐
+  - 일반적으로 10~100ms
+- 할당 시간이 지나면 프로세스는 선점당하고 ready queue 제일 뒤에 가서 다시 줄을 섬
+- n개의 프로세스가 ready queue에 있고, 할당 시간이 q time unit인 경우 각 프로세스는 최대 q time unit 단위로 CPU 시간의 1/n을 얻음
+  - 어떤 프로세스도 (n-1) q time unit 이상 기다리지 않음
+- 응답시간이 빠르다는 장점이 있음
+- CPU 사용 시간이 길수록 대기 시간도 비례해서 커짐
+- q가 커지면 FCFS와 유사해짐
+- q가 작아지면 context switch 오버헤드가 커짐
+- 프로세스의 CPU burst time이 비슷한 경우 average turnaround time이 길어짐
+
+
+
+### Multilevel Queue
+
+- Ready queue를 여러개로 분할
+
+  ![image-20220510200930314](README.assets/image-20220510200930314.png)
+
+- 각 큐는 독립적인 스케줄링 알고리즘을 가짐
+- 큐에 대한 스케줄링이 필요
+  - Fixed priority scheduling
+    - 무조건 우선순위가 높은 큐부터 처리
+    - Starvation 문제 발생
+  - Time slice
+    - 각 큐에 CPU time을 적절한 비율로 할당
+- 두 개의 queue로 분할하는 예시
+  - foreground (interactive)
+    - PR
+  - background (batch - no human interaction)
+    - FCFS
+
+
+
+### Multilevel Feedback Queue
+
+- 프로세스가 다른 큐로 이동 가능
+
+  ![image-20220510201550940](README.assets/image-20220510201550940.png)
+
+  - 프로세스는 처음에 맨 위의 큐에 들어감
+  - 할당시간이 끝나면 아래 큐로 내려감
+    - CPU 사용시간이 짧은 프로세스는 위쪽에서 빠져나감
+    - CPU 사용시간이 긴 프로세스는 점점 아래로 내려감
+
+- 정의해야하는 파라미터
+  - Queue의 수
+  - 각 큐의 scheduling algorithm
+  - 프로세스를 상위/하위 큐로 보내는 기준
+  - 프로세스가 CPU 서비스를 받으려 할 때 들어갈 큐를 결정하는 기준
+
+
+
+### Multiple-Processor Scheduling
+
+- CPU가 여러 개인 경우 스케줄링은 더 복잡해짐
+- Homogeneous processor인 경우
+  - Queue에 한 줄로 세워서 각 프로세서가 알아서 꺼내가도록 할 수 있음
+  - 반드시 특정 프로세서에서 수행되어야 하는 프로세스가 있는 경우는 문제가 더 복잡해짐
+- Load sharing
+  - 일부 프로세서를 job이 몰리지 않도록 부하를 적절히 공유하는 메커니즘 필요
+  - 별개의 큐를 두는 방법
+  - 공동 큐를 사용하는 방법
+- Symmetric Multiprocessing (SMP)
+  - 각 프로세서가 각자 알아서 스케줄링 결정
+- Asymmetric multiprocessing
+  - 하나의 프로세서가 시스템 데이터의 접근과 공유를 책임지고 나머지 프로세서는 거기에 따름
+
+
+
+### Real-Time Scheduling
+
+- Hard real-time systems
+  - 정해진 시간 안에 반드시 끝내도록 스케줄링해야 함
+- Soft real-time computing
+  - 일반 프로세스에 비해 높은 우선 순위를 갖도록 해야 함
+
+
+
+### Thread Scheduling
+
+- Local Scheduling
+  - User level thread의 경우 OS가 thread의 존재를 모르므로 사용자 수준의 thread library에 의해 thread를 스케줄할지 결정
+- Global Scheduling
+  - Kernel level thread의 경우 일반 프로세스와 마찬가지로 커널의 단기 스케줄러가 어떤 thread를 스케줄할지 결정
+
+
+
+## Algorithm Evaluation
+
+- Queueing models
+  - 확률 분포로 주어지는 arrival rate와 service rate 등을 통해 각종 performance index 값을 계산
+- Implementation & Measurement
+  - 실제 시스템에 알고리즘을 구현하여 실제 작업에 대하여 성능을 측정하고 비교
+- Simulation
+  - 알고리즘을 모의 프로그램으로 작성 후 실제 데이터인 trace를 입력으로 하여 결과 비교
+
+
+
+# 6 . Process Synchronization
+
+## 데이터의 접근
+
+![image-20220510203019035](README.assets/image-20220510203019035.png)
+
+
+
+## Race Condition
+
+![image-20220510203138274](README.assets/image-20220510203138274.png)
+
+- 여러 주체가 하나의 데이터에 접근하면 Race condition의 가능성이 있음
+- Multiprocessor system
+  - 공유메모리를 사용하는 프로세스들
+  - 커널 내부 데이터를 접근하는 루틴들
+
+
+
+## OS에서의 Race Condition
+
+### interrupt handler vs kernel
+
+![image-20220510203713313](README.assets/image-20220510203713313.png)
+
+- 커널 모드 실행 중 인터럽트가 발생하여 인터럽트 처리 루틴이 수행
+  - 양쪽 다 커널 코드이므로 kernel address space 공유
+- 해결책
+  - 커널 모드 실행 중 인터럽트 막기
+
+
+
+### Preempt a process running in kernel
+
+![image-20220510203937364](README.assets/image-20220510203937364.png)
+
+- 시스템 콜을 했는데, 해당 프로세스의 할당 시간이 끝남
+- 해결책
+  - 커널 모드에서 수행 중일 때는 CPU를 preempt하지 않음
+  - 커널 모드에서 유저 모드로 돌아갈 때 preempt
+
+
+
+### Multiprocessor
+
+![image-20220510204143507](README.assets/image-20220510204143507.png)
+
+- 프로세서가 여러개인 경우, interrupt enable/disable로 race condition을 해결할 수 없음
+- 해결책
+  1. 한 번 하나의 CPU만이 커널에 접근할 수 있게 하는 방법
+  2. 커널 내부에 있는 각 공유 데이터에 접근할 때 마다 그 데이터에 대해 lock/unlock하는 방법
+
+
+
+## Process Synchronization 문제
+
+- 공유 데이터의 동시 접근은 데이터의 불일치 문제를 발생시킬 수 있음
+- 일관성 유지를 위해서는 협럭 프로세스 간의 실행 순서를 정해주는 매커니즘 필요
+- Race condition
+  - 여러 프로세스들이 동시에 공유 데이터를 접근하는 상황
+  - 데이터의 최종 연산 결과는 마지막에 그 데이터를 다룬 프로세스에 따라 달라짐
+  - Race condition을 막기 위해서는 concurrent process가 동기화되어야 함
+
+
+
+## The Critical-Section Problem
+
+- n개의 프로세스가 공유 데이터를 동시에 사용하기를 원하는 경우
+- 각 프로세스의 code segment에는 공유 데이터를 접근하는 코드인 critical section이 존재
+- 하나의 프로세스가 critical section에 있을  다른 모든 프로세스는 critical section에 들어갈 수 없어야 함
