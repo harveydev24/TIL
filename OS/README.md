@@ -641,7 +641,7 @@ Reference: [운영체제, 반효경(이화여대) ](http://www.kocw.or.kr/home/c
 
 
 
-## fork() 시스템 콜
+## `fork()` 시스템 콜
 
 ```c
 int main() {
