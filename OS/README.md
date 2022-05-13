@@ -1058,3 +1058,154 @@ int main() {
 - n개의 프로세스가 공유 데이터를 동시에 사용하기를 원하는 경우
 - 각 프로세스의 code segment에는 공유 데이터를 접근하는 코드인 critical section이 존재
 - 하나의 프로세스가 critical section에 있을  다른 모든 프로세스는 critical section에 들어갈 수 없어야 함
+
+
+
+## 프로그램적 해결법의 충족 조건
+
+- Mutual Exclusion (상호 배제)
+  - 프로세스 P가 critical section 부분을 수행 중이면, 다른 모든 프로세스들은 그들의 critical section에 들어가면 안됨
+- Progress (진행)
+  - 아무도 critical section에 있지 않은 상태에서 들어가고자 하는 프로세스가 있으면 들어가게 해주어야 함
+- Bounded Waiting (유한 대기)
+  - 프로세스가 critical section에 들어가려고 요청한 후부터 그 요청이 허용될 때까지 다른 프로세스들이 critical section에 들어가는 횟수에 한계가 있어야 함
+
+
+
+## 해결을 위한 알고리즘
+
+### Algorithm 1
+
+![image-20220513164707581](README.assets/image-20220513164707581.png)
+
+- ciritical section에 교대로 들어가도록 짜여져 있음
+- Progress 조건을 만족하지 못함
+  - 극단적으로 P1은 여러번, P2는 한 번만 ciritical section에 들어가는 경우 교대가 한 번 밖에 일어나지 않아서 P1이 여러번 들어갈 수 없음
+
+
+
+### Algorithm 2
+
+![image-20220513165004883](README.assets/image-20220513165004883.png)
+
+- 2행까지 수행 후 CPU를 뺏긴다면, 끊임 없이 양보하는 상황 발생 가능
+- Progress 조건 위배
+
+
+
+### Algorithm 3 (Peterson's Algorithm)
+
+![image-20220513165203618](README.assets/image-20220513165203618.png)
+
+- 모든 조건을 만족
+- Busy waiting(=spin lock)
+  - 계속 CPU와 memory를 쓰면서 대기하므로 비효율적
+
+
+
+## Synchronization Hardware
+
+![image-20220513165647782](README.assets/image-20220513165647782.png)
+
+- 동기화 문제는 읽고 쓰는 작업을 한 번에 처리할 수 없기 때문에 발생
+- 하드웨어적으로 Test & modify를 atomic하게 수행할 수 있도록 하면 해결 가능
+
+
+
+## Semaphores
+
+- 앞의 방식들을 추상화시켜 개발자에게 편의성 제공
+
+- Semaphore S
+
+  - integer variable
+
+  - 두 가지 atomic 연산에 의해서만 접근 가능
+
+    ![image-20220513170046130](README.assets/image-20220513170046130.png)
+
+    - P 연산을 통해 자원을 가져감
+    - V 연산을 통해 자원을 내놓음
+
+### Block / Wakeup Implementation
+
+- Semaphore를 다음과 같이 정의
+
+  ![image-20220513170533752](README.assets/image-20220513170533752.png)
+
+- block과 wakeup을 다음과 같이 가정
+
+  - block
+
+    - 커널은 block을 호출한 프로레스를 suspend 시킴
+    - 이 프로세스의  PCB를 semaphore에 대한 wait queue에 넣음
+
+  - wakeup(P)
+
+    - block된 프로세스 P를 wakeup 시킴
+
+    - 이 프로세스의 PCB를 ready queue로 옮김
+
+      ![image-20220513170822028](README.assets/image-20220513170822028.png)
+
+
+
+### Busy-wait vs Block/wakeup
+
+- Critical section의 길이가 긴 경우 Block/wakeup이 좋음
+- Critical section의 길이가 짧은 경우 Blcok/wakeup의 오버헤드가 busy-wait의 오버헤드보다 더 커질 수 있음
+- 일반적으로는 Block/wakeup 방식이 더 좋음
+
+
+
+### Two Types of Semaphores
+
+- Counting semaphore
+  - 도메인이 0 이상인 임의의 정수값
+  - 주로 resource counting에 사용
+- Binary semaphore (=mutex)
+  - 0 또는 1 값만 가질 수 있는 semaphore
+  - 주로 mutual exclusion (lock/unlock)에 사용
+
+
+
+## Deadlock and Starvation
+
+- Deadlock
+
+  - 둘 이상의 프로세스가 서로 상대방에 의해 충족될 수 있는 event를 무한히 기다리는 현상
+
+    ![image-20220513171330453](README.assets/image-20220513171330453.png)
+
+    - S와 Q의 획득 순서를 정해놓으면 해결 가능
+
+- Starvation
+  - indefinite blocking
+    - 프로세스가 suspend된 이유에 해당하는 semaphore 큐에서 빠져나갈 수 없는 현상
+
+
+
+## Classical Problems of Synchronization
+
+### Bounded-Buffer Problem
+
+![image-20220513173743860](README.assets/image-20220513173743860.png)
+
+- Producer, Consumer는 여러개일 수 있음
+- 여러개의 Producer가 같은 버퍼에 대해 작업하는 경우
+  - Lock을 걸어서 동시 접근을 막아야 함
+  - Consumer도 마찬가지
+  - shared data의 mutual exclusion을 위해 binary semaphore 필요
+- 버퍼가 가득 차거나 비었을 때 가용 자원의 개수를 세야 함
+  - 남은 full/empty buffer의 수를 표시하기 위해 integer semaphore 필요
+
+ 
+
+
+
+
+
+
+
+
+
