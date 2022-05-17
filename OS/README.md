@@ -1199,7 +1199,73 @@ int main() {
 - 버퍼가 가득 차거나 비었을 때 가용 자원의 개수를 세야 함
   - 남은 full/empty buffer의 수를 표시하기 위해 integer semaphore 필요
 
- 
+ ![image-20220517191628608](README.assets/image-20220517191628608.png)
+
+
+
+### Readers-Writers Problem
+
+- 한 프로세스가 DB에 write 중일 때 다른 프로세스가 접근하면 안됨
+
+- read는 동시에 해도 됨
+
+- solution
+
+  ![image-20220517192202398](README.assets/image-20220517192202398.png)
+
+  - Writer가 DB에 접근 허가를 얻지 못한 상태에서는 대기중인 모든 Reader들을 다 DB에 접근하게 해줌
+  - Wrtier는 대기 중인 Reader가 하나도 없을 때 DB 접근이 허용됨
+  - 일단 Wrtier가 DB에 접근 중이면 Reader들은 접근이 금지됨
+  - Writer가 DB에서 빠져나가야만 REader의 접근이 허용됨
+
+
+
+### Dining-Philosophers Problem
+
+![image-20220517192822856](README.assets/image-20220517192822856.png)
+
+- Deadlock 가능성 존재
+
+  - 모든 철학자가 동시에 왼쪽 젓가락을 집은 경우
+
+- Solution
+
+  - 4명의 철학자만이 테이블에 동시에 앉을 수 있도록 함
+
+  - 젓가락을 두 개 모두 집을 수 있을 때에만 젓가락을 집을 수 있게 함
+
+  - 비대칭적으로, 짝수번째 철학자는 왼쪽 젓가락부터, 홀수번째 철학자는 오른쪽 젓가락부터 잡도록 함
+
+    ![image-20220517193401242](README.assets/image-20220517193401242.png)
+
+
+
+
+
+## Monitor
+
+- Semaphore의 문제점
+  - 코딩하기 힘듦
+  - 정확성의 입증이 어려움
+  - 자발적 협력이 필요
+  - 한 번의 실수가 모든 시스템에 치명적 영향
+
+![image-20220517194254875](README.assets/image-20220517194254875.png)
+
+- Monitor는 동시 수행중인 프로세스 사이에서 abstract data type의 안전한 공유를 보장하기 위한 high-level synchronization construct
+- Monitor 내에서는 한 번에 하나의 프로세스만이 활동 가능
+- 프로그래머가 동기화 제약 조건을 명시적으로 코딩할 필요 없음
+- 프로세스가 모니터 안에서 기다릴 수 있도록 하기 위해 condition variable 사용
+  - condition variable은 `wait`와 `signal` 연산에 의해서만 접근 가능
+  - `x.wait()`을 invoke한 프로세스는 다른 프로세스가 `x.signal()`을 invoke하기 전까지 suspend됨
+  - `x.signal()`은 정확하게 하나의 suspend된 프로세스를 resume함
+    - suspend된 프로세스가 없으면 아무일도 일어나지 않음
+
+
+
+
+
+
 
 
 
