@@ -1169,6 +1169,8 @@ int main() {
 
 
 
+
+
 ## Deadlock and Starvation
 
 - Deadlock
@@ -1414,3 +1416,254 @@ int main() {
 
 
 
+# 9. Memory Management
+
+## Logical vs Physical Address
+
+- Logical address (=virtual address)
+  - 프로세스마다 독립적으로 가지는 주소 공간
+  - 각 프로세스마다 0번지부터 시작
+  - CPU가 보는 주소는 logical address임
+    - 코드는 실제 메모리에 올라가더라도, 컴파일된 코드 내부에 정해진 주소는 logical address인 상태로 그대로 남아있기 때문
+- Physical address
+  - 메모리에 실제로 올라가는 위치
+- 주소 바인딩
+  - 주소를 결정하는 것
+  - 실제 메모리의 어느 위치에 프로그램을 올릴지
+  - Symbolic Address -> Logical Address -> Physical address
+
+
+
+### 주소 바인딩 (Address Binding)
+
+![image-20220601205804765](README.assets/image-20220601205804765.png)
+
+- Compile time binding
+
+  - 물리적 메모리 주소가 컴파일 시 알려짐
+  - 시작 위치 변경 시 재컴파일
+  - 컴파일러는 절대 코드 생성
+  - 메모리 주소가 미리 결정되기 때문에 실제 메모리의 빈 공간을 활용하지 못함
+    - 논리적 주소 = 물리적 주소
+    - 비효율적이어서 거의 사용하지 않음
+
+- Load time binding
+
+  - Loader의 책임하에 물리적 메모리 주소 부여
+  - 컴파일러가 재배치가능코드를 생성한 경우 가능
+
+- Execution time binding (=Run time binding)
+
+  - 수행이 시작된 이후에도 프로세스의 메모리 상 위치를 옮길 수 있음
+
+  - CPU가 주소를 참조할 때마다 binding을 점검
+
+    - address mapping table
+
+  - 하드웨어적인 지원이 필요
+
+    - MMU (Memory Management Unit)
+
+      - 논리 주소를 물리 주소로 mapping 해주는 하드웨어
+
+      - relocation register (base register)
+
+        - 실제 메모리 상에서 프로그램의 시작 위치 저장
+
+      - limit register
+
+        - 프로그램이 차지하는 메모리 크기 저장
+        - 프로그램이 자신의 메모리 범위를 벗어나는 것을 막음
+          - 넘어가면 Trap
+
+        ![image-20220601210439606](README.assets/image-20220601210439606.png)
+
+        ![image-20220601210614750](README.assets/image-20220601210614750.png)
+
+
+
+## Some Terminologies
+
+- Dynamic Loading
+  - 프로세스 전체를 메모리에 미리 다 올리는 것이 아니라 해당 루틴이 불려질 때 메모리에 load하는 것
+  - memory utilization 향상
+  - 가끔씩 사용 되는 많은 양의 코드의 경우에 유용
+    - 예를 들어, 오류 처리 루틴
+  - OS의 특별한 지원 없이 프로그램 자체에서 구현 가능
+    - OS는 라이브러리를 통해 지원 가능
+
+- Overlays
+  - 메모리에 프로세스의 부분 중 실제 필요한 정보만을 올림
+  - 프로세스의 크기가 메모리보다 클 때 유용
+  - OS의 지원 없이 사용자에 의해 구현
+  - 작은 공간의 메모리를 사용하던 초창기 시스템에서 수작업으로 개발자가 구현
+    - 프로그래밍이 매우 복잡
+    - Manual Overlay
+
+- Swapping
+
+  ![image-20220601211249124](README.assets/image-20220601211249124.png)
+
+  - 프로세스를 일시적으로 메모리에서 backing store로 쫓아내는 것
+  - backing store (=swap area)
+    - 디스크
+      - 많은 사용자의 프로세스 이미지를 담을 만큼 충분히 빠르고 큰 저장 공간
+  - Swap in / out
+    - 일반적으로 중기 스케줄러에 의해 swap out 시킬 프로세스 선정
+    - priority-based CPU scheduling algorithm
+      - 우선순위가 낮은 프로세스를 swapped out 시킴
+      - 우선순위가 높은 프로세스를 메모리에 올림
+    - Compile time binding 혹은 load time binding에서는 원래의 메모리 위치로 swap in 해야 하므로 불편
+    - Execution time binding에서는 추후 빈 메모리 영역 아무 곳에나 올릴 수 있음
+    - swap time은 대부분 transfer time (swap되는 양에 비례하는 시간)임
+
+- Dynamic Linking
+  - Linking을 실행 시간(execution time)까지 미루는 기법
+  - Static linking
+    - 라이브러리가 프로그램의 실행 파일 코드에 포함됨
+    - 실행 파일의 크기가 커짐
+    - 동일한 라이브러리를 각각의 프로세스가 메모리에 올리므로 메모리가 낭비됨
+  - Dynamic linking
+    - 라이브러리가 실행시 연결됨
+    - 라이브러리 호출 부분에 라이브러리 루틴의 위치를 찾기 위한 stub이라는 작은 코드를 둠
+    - 라이브러리가 이미 메모리에 있으면, 그 루틴의 주소로 가고, 없으면 디스크에서 읽어옴
+    - OS의 도움이 필요
+
+
+
+## Allocation of Physical Memory
+
+- 메모리는 일반적으로 두 영역으로 나누어 사용
+
+  - OS 상주 영역
+    - interrupt vector와 함께 낮은 주소 영역 사용
+  - 사용자 프로세스 영역
+    - 높은 주소 영역 사용
+
+- 사용자 프로세스 영역의 할당 방법
+
+  - Contiguous allocation
+
+    ![image-20220601212113538](README.assets/image-20220601212113538.png)
+
+    - 각각의 프로세스가 메모리의 연속적인 공간에 적재되도록 하는 것
+
+    - 고정 분할 방식
+
+      - 사용자 프로그램이 들어갈 물리적인 메모리를 미리 나누어 놓음
+      - 할당해놓은 공간보다 프로그램의 크기가 크면 할당되지 못하고 외부 조각이라 함
+      - 할당해놓은 공간보다 프로그램의 크기가 작아서 남은 공간을 내부 조각이라 함
+
+    - 가변 분할 방식
+
+      - 사용자 프로그램이 들어갈 물리적인 메모리를 미리 나누어 놓지 않음
+
+      - 가변 분할 방식에서도 외부 조각이 생길 수 있음
+
+      - Dynamic Storage-Allocation Problem
+
+        - 가변 분할 방식에서 크기가 n인 요청을 만족하는 가장 적절한 hole을 찾는 문제
+        - First-fit
+          - 크기가 n 이상인 것 중 최초로 찾아지는 hole에 할당
+        - Best-fit
+          - 크기가 n 이상인 가장 작은 hole을 찾아서 할당
+          - hole들의 리스트가 크기순으로 정렬되지 않은 경우 모든 hole의 리스트를 탐색해야 함
+          - 많은 수의 아주 작은 hole들이 생성됨
+        - Worst-fit
+          - 가장 큰 hole에 할당
+          - Best-fit처럼 모든 리스트를 탐색해야 함
+          - 상대적으로 아주 큰 hole들이 생성됨
+        - First-fit, Best-fit이 Worst-fit보다 속도와 공간 측면에서 효과적임이 실험적으로 밝혀짐
+
+      - Hole
+
+        - 가용 메모리 공간
+
+        - 다양한 크기의 hole들이 메모리 여러 곳에 흩어져 있음
+
+        - 프로세스가 도착하면 수용가능한 hole을 할당
+
+        - OS는 다음의 정보를 유지
+
+        - 할당 공간
+
+        - 가용 공간 (hole)
+
+        - Compaction
+
+          - 외부 조각 문제를 해결하는 한 가지 방법
+          - 사용중인 메모리 영역을 한 군데로 몰고 hole들을 다른 한 곳으로 몰아 큰 block을 만드는 것
+          - 매우 비용이 많이 듦
+          - 최소한의 메모리 이동으로 compaction 하는 방법 (매우 복잡)
+          - compaction은 프로세스의 주소가 실행 시간에 동적으로 재배치 가능한 경우에만 수행될 수 있음
+
+          
+
+  - Noncontiguous allocation
+
+    - 하나의 프로세스가 메모리의 여러 영역에 분산되어 올라갈 수 있음
+
+    - Paging
+
+      - 프로세스의 가상 메모리를 동일한 사이즈의 page 단위로 나눔
+      - 가상 메모리의 내용이 page 단위로 noncontiguous하게 저장됨
+      - 일부는 backing storage에, 일부는 physical memory에 저장
+      - physical memory를 동일한 크기의 frame으로 나눔
+      - logical memory를 frame과 같은 크기의 page로 나눔
+      - page table을 사용하여 logical address를 physical address로 변환
+      - 외부 조각 발생 안함
+      - 내부 조각 발생 가능
+        - 프로그램의 가상 메모리가 page 단위로 깔끔하게 안나누어 떨어질 수 있음
+
+      ![image-20220601213428173](README.assets/image-20220601213428173.png)
+
+      ![image-20220601213557870](README.assets/image-20220601213557870.png)
+
+      - Page table은 메모리에 상주
+
+      - Page-table base register (PTBR)가 page table을 가리킴
+
+      - Page-table length register (PTLR)가 테이블 크기를 보관
+
+      - Page table이 메모리에 있으므로 주소 바인딩을 위해 2번의 메모리 접근이 필요
+
+        - page table 접근 1번, 실제 data/instruction 접근 1번
+
+      - 속도 향상을 위해 Translation Look-Aside Buffer (TLB, Associative register)라는 고속의 lookup hardware cache 사용
+
+        - parallel search 가능
+
+        - TLB에는 page table의 일부만 존재
+
+        - TLB는 순차적으로 검색
+
+        - TLB는 프로세스마다 주소 바인딩 정보가 다르므로 context switch 때 flush
+
+          ![image-20220601214436462](README.assets/image-20220601214436462.png)
+
+      - Two-Level Page Table
+
+        - 현대의 컴퓨터는 address space가 매우 큰 프로그램 지원
+
+          - 32bit 
+            - 2^32^ B = 4GB의 주소 공간
+            - page size가 4KB면 1M개의 page table entry 필요
+            - 각 page entry가 4B면 프로세스당 4MB의 page table 필요
+            - 대부분의 프로그램은 4GB의 주소 공간 중 극히 일부만 사용하므로 page table 공간이 낭비됨
+
+        - page table 자체를 page로 구성
+
+        - 시간은 더 걸리지만, 공간을 아낄 수 있음
+
+          - 실제로는 테이블을 하나 더 만들기 때문에 공간을 더 쓸 것 같음
+          - 그러나, 사용되지 않는 주소 공간에 대한 outer page table의 엔트리 값은 NULL이고 inner page table이 만들어지지 않으므로 공간을 아낄 수 있음
+
+          
+
+        ![image-20220601214930211](README.assets/image-20220601214930211.png)
+
+        ![image-20220601215748621](README.assets/image-20220601215748621.png)
+
+    - Segmentation
+
+      
