@@ -1664,6 +1664,102 @@ int main() {
 
         ![image-20220601215748621](README.assets/image-20220601215748621.png)
 
-    - Segmentation
+    - Multi-level Paging and Performance
 
-      
+      - Address space가 더 커지면, 다단계 페이지 테이블 필요
+      - 각 단계의 페이지 테이블이 메모리에 존재하므로 logical address의 physical address 변환에 더 많은 메모리 접근 필요
+      - TLB를 통해 메모리 접근 시간을 줄일 수 있음
+      - 4단계 페이지 테이블을 사용하는 경우
+        - 메모리 접근 시간이 100ns, TLB 접근 시간이 20ns이고 TLB hit ratio가 98%인 경우 effective memory access time = 0.98 * 120 + 0.02 * 520 = 128ns
+        - 결과적으로 주소변환을 위해 28ns만 소요
+
+    - Page Table에 존재하는 추가적인 비트
+
+      - Protection bit
+
+        - page에 대한 접근 권한 (read/write/read-only)
+
+      - Valid (v) / Invalid (i) Bit in a Page Table
+
+        ![image-20220603181424880](README.assets/image-20220603181424880.png)
+
+      - page table에 존재하는 추가적인 비트
+
+      - Valid bit
+
+        - 해당 주소의 frame에 그 프로세스를 구성하는 유효한 내용이 있음을 뜻함 (접근 허용)
+
+      - Invalid
+
+        - 해당 주소의 frame에 유효한 내용이 없음을 뜻함 (접근 불허)
+          - 프로세스가 그 주소 부분을 사용하지 않는 경우
+          - 해당 페이지가 메모리에 올라와 있지 않고 swap area에 있는 경우
+
+    - Inverted Page Table
+
+      - page table이 매우 큰 이유
+
+        - 모든 프로세스 별로 그 logical address에 대응하는 모든 page에 대해 page table entry가 존재
+        - 대응하는 page가 메모리에 있든 없든 간에 page table에는 entry로 존재
+
+      - 시스템에 inverted page table이 딱 하나 존재
+
+      - physical memory의 몇 번째 프레임에 어떤 페이지가 있는지 나타냄
+
+      - inverted page table을 순차적으로 탐색해서 바꾸고자 하는 프로세스의 logical address에 대응하는 entry를 찾아야 함
+
+        - page table의 크기를 줄이는 대신, 오버헤드가 커짐
+        - associative register를 사용하여 병렬적으로 탐색하는 방식 사용
+
+        ![image-20220603182458419](README.assets/image-20220603182458419.png)
+
+    - Shared Pages
+      - Re-entrant code (Pure code)
+      - 같은 code로 돌아가는 프로세스의 경우 code에 대한 page를 공유할 수 있음
+      - read-only로 하여 프로세스 간에 하나의 code만 메모리에 올림
+      - Shared code는 모든 프로세스의 Logical address space에서 동일한 위치에 있어야 함
+    - Private code and data
+      - 각 프로세스들은 독자적으로 메모리에 올림
+      - Private data는 logical address space의 아무 곳에나 와도 무방
+
+  - Segmentation
+
+    - 프로그램은 의미 단위인 여러 개의 segment로 구성
+      - 작게는 프로그램을 구성하는 함수 하나하나를 세그먼트로 정의
+      - 크게는 프로그램 전체를 하나의 세그먼트로 정의
+      - 일반적으로 code, data, stack 부분이 하나씩의 세그먼트로 정의됨
+    - Segmentation Architecture
+      - Logical address는 <segment-number, offset>으로 구성
+      - Segment table
+        - 세그먼트의 물리적 주소의 시작위치와 세그먼트 길이로 이루어짐
+        - page와는 다르게 의미 단위인 세그먼트는 길이가 다를 수 있음
+      - Segment-table base register (STBR)
+        - 물리적 메모리에서의 segment table의 위치
+      - Segment-table length register (STLR)
+        - 프로그램이 사용하는 segment의 수
+
+    ![image-20220603183518334](README.assets/image-20220603183518334.png)
+
+    - Protection
+      - 각 세그먼트 별로 bit 부여
+      - 페이지의 경우 일정한 크기로 잘랐기 때문에 특정 페이지에 code와 data가 같이 들어가는 상황이 발생할 수 있고, 이렇게 되면 bit를 부여하기 애매함
+    - Sharing
+      - 세그먼트는 의미 단위이기 때문에 공유(sharing)와 보안(protction)에 있어 페이징 보다 효과적
+    - Allocation
+      - 세그먼트의 길이가 동일하지 않으므로 가변분할 방식에서와 동일한 문제점들이 발생함
+        - first fit/best fit 써야 함
+        - 외부 조각 생김
+
+  - Paged Segmentation
+
+    ![image-20220603190649445](README.assets/image-20220603190649445.png)
+
+    - 세그먼트 하나가 여러개의 페이지로 구성됨
+    - 실제로 메모리에는 페이지가 올라감
+
+
+
+
+
+
+
