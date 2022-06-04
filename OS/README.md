@@ -1416,7 +1416,7 @@ int main() {
 
 
 
-# 9. Memory Management
+# 8. Memory Management
 
 ## Logical vs Physical Address
 
@@ -1761,5 +1761,272 @@ int main() {
 
 
 
+# 9. Virtual Memory
 
+- DEMAND PAGING
+
+  - 실제로 필요할 때 페이지를 메모리에 올림
+    - I/O 양의 감소
+    - 메모리 사용량 감소
+    - 빠른 응답 시간
+    - 더 많은 사용자 수용
+
+  - Valid / Invalid bit의 사용
+    - Invalid	
+      - 사용되지 않는 주소 영역
+      - 페이지가 물리적인 메모리에 없는 경우
+    - 처음에는 모든 bit가 invalid
+    - address translation을 할 때, invalid bit이면 page fault
+
+- Page Fault
+
+  - invalid page에 접근하면 MMU가 trap을 발생시킴
+
+  - 커널 모드로 들어가서 page fault handler가 invoke됨
+
+  - page fault 처리 순서
+
+    ![image-20220604162844249](README.assets/image-20220604162844249.png)
+
+    1. Invalid reference (bad address, protection violation) 체크
+    2. Get an empty page frame (빈 곳이 없으면 뺏음)
+    3. 해당 페이지를 디스크에서 메모리로 읽어옴
+       1. 디스크 I/O가 끝나기까지 이 프로세스는 CPU는 block 상태가 됨
+       2. 디스크 I/O가 끝나면 page tables entry 기록, valid bit set
+       3. ready queue에 이 프로세스 넣기
+    4. 이 프로세스가 CPU를 잡고 다시 running
+    5. 아까 중단되었던 instruction을 재개
+
+- Performance of Demand Paging
+
+  - Page Fault Rate 0<= p <= 1
+    - if p = 0 -> no page fualts
+    - if p = 1 -> every reference is a fault
+  - Effective Access Time
+    - (1-p) * memory access time + p * (OS & HW page fault overhead + swap page in + [swap page out if needed] + OS & HW restart overhead)
+
+- Free frame이 없는 경우
+
+  - Page replacement
+
+    ![image-20220604163352296](README.assets/image-20220604163352296.png)
+
+    - 어떤 프레임을 뺏을지 결정해야 함
+    - 곧바로 사용되지 않을 페이지를 쫓아내는 것이 좋음
+    - 동일한 페이지가 여러 번 메모리에서 쫓겨났다가 다시 들어올 수 있음
+
+  - Replacement Algorithm
+
+    - page-fault rate를 최소화하는 것이 목표
+    - 알고리즘의 평가
+      - 주어진 page reference string에 대해 page fault를 얼마나 내는지 조사
+    - reference stirng의 예시
+      - 1, 2, 3, 4, 1, 2, 5, 1, 3, 4, 5
+
+    - Optimal Algorithm
+
+      ![image-20220604163826914](README.assets/image-20220604163826914.png)
+
+      - MIN (OPT)
+        - 가장 먼 미래에 참조되는 페이지를 replace
+      - 미래의 참조를 어떻게 아는가?
+        - 미래를 안다고 가정하기 때문에 실제 시스템에서 사용 불가
+        - Offline algorithm
+      - 다른 알고리즘의 성능에 대한 upper bound 제공
+        - 다른 알고리즘의 성능이 이보다 더 좋을 수 없음
+        - Belady's optimal algorithm, MIN, OPT 등으로 불림
+
+    - FIFO (First In First Out) Algorithm
+
+      ![image-20220604163912728](README.assets/image-20220604163912728.png)
+
+      - FIFO
+        - 먼저 들어온 것을 먼저 내쫓음
+      - FIFO Anomaly (Belady's Anomaly)
+        - 메모리 크기를 늘리면 성능이 나빠짐
+
+    - LRU (Least Recently Used) Algorithm
+
+      ![image-20220604164028004](README.assets/image-20220604164028004.png)
+
+      - LRU
+
+        - 가장 오래 전에 참조된 것을 지움
+
+      - 더블 링크드 리스트 형태로 페이지의 순서를 관리
+
+        ![image-20220604164734995](README.assets/image-20220604164734995.png)
+
+        - 시간 복잡도 O(1)
+
+    - LFU (Least Frequently Used) Algorithm
+
+      - LFU
+
+        - 참조 횟수 (reference count)가 가장 적은 페이지를 지움
+
+      - 최저 참조 횟수인 페이지가 여러개인 경우
+
+        - LFU 알고리즘 자체에서는 여러 페이지 중 임의로 선정
+        - 성능 향상을 위해 가장 오래 전에 참조된 페이지를 지우게 구현할 수 있음
+
+      - 참조 횟수가 가장 적은 페이지가 루트에 오도록 최소힙 형태로 구현
+
+        ![image-20220604165049796](README.assets/image-20220604165049796.png)
+
+        - 시간 복잡도 O(logn)
+
+    - LRU vs LFU
+
+      ![image-20220604164411010](README.assets/image-20220604164411010.png)
+
+      - LRU는 1번 페이지 삭제
+        - 마지막 참조 시점만 보기 때문에 그 이전에 참조 횟수가 많다는 것을 고려하지 않음
+      - LFU는 4번 페이지 삭제
+        - 최근 시점부터 참조횟수가 늘어나기 시작하려는 페이지를 지우게됨
+
+- 다양한 캐싱 환경
+
+  - 캐싱 기법
+
+    - 한정된 빠른 공간(캐시)에 요청된 데이터를 저장해두었다가 후속 요청시 캐시로부터 직접 서비스하는 방식
+    - Paging system 외에도 cache memory, buffer caching, web caching 등 다양한 분야에서 사용
+
+  - 캐시 운영의 시간 제약
+
+    - 교체 알고리즘에서 삭제할 항목을 결정하는 일에 지나치게 많은 시간이 걸리는 경우 실제 시스템에서 사용할 수 없음
+
+    - Buffer caching이나 web caching의 경우 O(1)에서 O(logn)까지 허용
+
+    - Paging system인 경우
+
+      - 페이지가 이미 메모리에 존재하는 경우 주소를 변환하는 과정에 OS가 전혀 관여하지 않기 때문에 참조시각 등의 정보를 OS가 알 수 없음
+
+      - page fault가 일어나야지만 OS가 디스크에서 페이지를 읽어오고, 관련된 정보를 알수 있음
+
+      - 즉, paging system에서는 OS에 정보가 반쪽만 제공되어 리스트나 힙과 같은 자료구조를 유지하면서 LRU, LFU와 같은 알고리즘을 적용할 수 없음
+
+      - 대신 Clock algorithm 사용
+
+        - LRU의 근사 알고리즘
+
+          - second chance algorithm
+          - NUR (Not Used Recently) 또는 NRU (Not Recently Used)로 불림
+
+        - Reference bit을 사용해서 교체 대상 페이지 선정
+
+          ![image-20220604171124860](README.assets/image-20220604171124860.png)
+
+          - circular list
+          - 참조된 페이지의 reference bit을 1로 바꿈
+          - Reference bit이 0인 것을 찾을 때까지 포인터를 하나씩 앞으로 이동
+          - 포인터를 이동하는 중에 reference bit이 1이면 모두 0으로 바꿈
+          - 0을 찾으면 그 페이지를 교체
+          - 한 바퀴 되돌아와서도 (=second chance) 0이면 그 때에는 replace 당함
+          - 자주 사용되는 페이지라면 second chance가 올 때 1
+
+        - Clock algorithm 개선
+
+          - reference bit과 modified bit (dirty bit) 함께 사용
+          - reference bit = 1
+            - 최근에 참조된 페이지
+          - modified bit = 1
+            - 최근에 변경된 페이지 (I/O를 동반하는 페이지)
+          - reference bit이 0인 페이지의 modified bit이 0이면 변경점이 없으므로 그냥 메모리에서 쫓아내면 됨
+          - 반면 modified bit이 1이면 내용이 수정되었으므로 백킹 스토어에 수정 내용을 반영한 뒤 메모리에서 쫓아냄
+          - modified bit이 0인 페이지를 우선적으로 쫓아내는 식으로 개선 가능
+
+- Page Frame의 Allocation
+
+  - Allocation problem
+    - 각 프로세스에 얼마만큼의 page frame을 할당할 것인가?
+  - Allocation의 필요성
+    - 메모리 참조 명령어 수행시 명령어, 데이터 등 여러 페이지 동시 참조
+    - Loop를 구성하는 page들은 한 번에 메모리에 올리는 것이 유리함
+      - 최소한의 allocation이 없으면 매 loop 마다 page fault
+  - Allocation Scheme
+    - Equal allocation
+      - 모든 프로세스에 똑같은 개수 할당
+    - Proportional allocation
+      - 프로세스 크기에 비례하여 할당
+    - Priority allocation
+      - 프로세스의 priority에 따라 다르게 할당
+
+- Global vs Local Replacement
+
+  - Global replacement
+    - Replcae 시 다른 프로세스에 할당된 프레임을 빼앗아 올 수 있음
+    - 프로세스별 할당량을 조절하는 또 다른 방법임
+    - FIFO, LRU, LFU 등의 알고리즘을 global replacement로 사용시 해당
+    - Working set, PFF 알고리즘 사용
+  - Local Replacement
+    - 자신에게 할당된 프레임 내에서만 replacement
+    - FIFO, LRU, LFU등의 알고리즘을 프로세스 별로 운영 시
+
+- Thrashing
+
+  - Thrashing Diagram
+
+    ![image-20220604172243861](README.assets/image-20220604172243861.png)
+
+  - 프로세스의 원활한 수행에 필요한 최소한의 페이지 프레임 수를 할당받지 못한 경우
+
+  - Page fault rate가 매우 높아짐
+
+    - 디스크에서 페이지를 읽어오느라 I/O가 계속 발생
+    - CPU utilization이 낮아짐
+    - CPU utilization이 낮으면 OS는 multiprogramming degree를 높여야 한다고 판단
+    - 또 다른 프로세스가 시스템에 추가됨
+    - 프로세스 당 할당된 프레임 수가 더욱 감소
+    - 프로세스는 페이지의 swap in / out으로 매우 바쁨
+    - 대부분의 시간에 CPU는 한가함
+    - low throughput
+
+- Working-Set Model
+
+  - Locality of reference
+
+    - 프로세스는 특정 시간 동안 일정 장소만을 집중적으로 참조함
+    - 집중적으로 참조되는 해당 페이지들의 집합을 locality set이라 함
+
+  - Working-set Model
+
+    - Locality에 기반하여 프로세스가 일정 시간 동안 원활하게 수행되기 위해 한꺼번에 메모리에 올라와 있어야 하는 페이지들의 집합을 working set이라 정의
+    - Working set 모델에서는 프로세스의 working set 전체 메모리에 올라와 있어야 수행되고 그렇지 않을 경우 모든 프레임을 반납한 후 swap out (suspend)
+    - Thrashing을 방지함
+    - Multiprogramming degree를 결정함
+
+  - Working set의 결정
+
+    ![image-20220604172927577](README.assets/image-20220604172927577.png)
+
+    - Working set window를 통해 알아냄
+    - window size가 dt인 경우
+      - 시각 t에서의 working set WS(t)
+        - Time in terval [t-dt, t] 사이에 참조된 서로 다른 페이지들의 집합
+      - Working set에 속한 페이지는 메모리에 유지, 속하지 않은 것은 버림
+        - 즉, 참조된 후 dt 시간 동안 해당 페이지를 메모리에 유지한 후 버림
+
+- PFF (Page-Fault Frequency) Scheme
+
+  ![image-20220604173136969](README.assets/image-20220604173136969.png)
+
+  - Page-fault rate의 상한값과 하한값을 둠
+    - Page fault rate가 상한 값을 넘으면 프레임을 더 할당
+    - Page fault rate가 하한 값 이하이면 할당 프레임 수를 줄임
+  - 빈 프레임이 없으면 일부 프로세스를 swap out
+
+- Page Size의 결정
+  - Page Size를 감소시키면
+    - 페이지 수 증가
+    - 페이지 테이블 크기 증가
+    - Internal fragmentation 감소
+    - Disk transfer의 효율성 감소
+      - Seek/rotation vs transfer
+      - 디스크 헤드가 움직이는 Seek 시간이 오래걸림
+    - 필요한 정보만 메모리에 올라와 메모리 이용이 효율적
+      - Locality의 활용 측면에서는 좋지 않음
+  - Trend
+    - Larger page size
+      - 64bit를 주로 사용하고, 메모리 크기가 커짐에 따라 페이지 사이즈가 작으면 페이지 테이블이 너무 커지게 됨
 
