@@ -462,5 +462,520 @@ val bytes = 0b11010010_01101001_10010100_10010010
   }
   ```
 
+- Java에 있는 삼항 연산자가 없음
 
+
+
+### `when`
+
+- `when`문은 C계열 언어의 `switch`문을 대체함
+
+- `when`문은 각각의 branch의 조건문이 만족할 때까지 위에서부터 순차적으로 인자를 비교함
+
+  ```kotlin
+  when (x) {
+    1 -> print("x == 1")
+    2 -> print("x == 2")
+    else -> {
+      print("x is neither 1 nor 2")
+    }
+  }
+  ```
+
+- `when`문이 식으로 사용된 경우에는 조건을 만족하는 branch의 값이 전체 식의 결과 값이 됨
+
+  ```kotlin
+  var res = when (x) {
+    100 -> "A"
+    90 -> "B"
+    80 -> "C"
+    else -> "F"
+  }
+  ```
+
+- `else`의 경우 다른 branch들의 조건이 만족되지 않을 때 수행됨
+
+- `when`이 식으로 사용된 경우 `else`가 필수
+
+- `when`이 식으로 사용된 경우 컴파일러가 `else`가 없어도 된다는 것을 입증할 수 있는 경우에는 `else` 생략 가능
+
+  ```kotlin
+  var res = when (x) {
+    true -> "맞다"
+    false -> "틀리다"
+  }
+  ```
+
+- 여러 조건들이 같은 방식으로 처리될 수 있는 경우, branch의 조건문에 콤마를 사용하면 됨
+
+  ```kotlin
+  when (x) {
+    0, 1 -> print("x == 0 or x == 1")
+    else -> print("otherwise")
+  }
+  ```
+
+- branch의 조문에 함수나 식을 사용할 수 있음
+
+  ```kotlin
+  when (x) {
+    parseInt(x) -> print("s encodes x")
+    1 + 3 -> print("4")
+    else -> print("s does not encode x")
+  }
+  ```
+
+- range나 collection에 `in`, `!in`으로 범위 등을 검사할 수 있음
+
+  ```kotlin
+  val validNumbers = listOf(3, 6, 9)
+  when (x) {
+    in validNumbers -> print("x is valid")
+    in 1..10 -> print("x is in the range")
+    in 10..20 -> print("x is outside the range")
+    else -> print("none of the above")
+  }
+  ```
+
+- `is`, `!is`를 이용하여 타입 검사 가능
+
+  - 이 때 스마트 캐스트가 적용됨
+
+  ```kotlin
+  fun hasPrefix(x: Any) = when(x) {
+    is String -> x.startsWith("prefix")
+    else -> false
+  }
+  ```
+
+- `when`은 `if-else` 체인을 대체할 수 있음
+
+- `when`에 인자를 입력하지 않으면, 논리연산으로 처리됨
+
+  ```kotlin
+  when {
+    x.isOdd() -> print("x is odd")
+    x.isEven() -> print("x is even")
+    else -> print("x is funny")
+  }
+  ```
+
+
+
+### `For`
+
+- `for`문은 iterator를 제공하는 모든 것을 반복할 수 있음
+
+  ```kotlin
+  var collection = listOf(1, 2, 3, 4, 5)
+  
+  for (item in collection) {
+    print(item)
+  }
+  ```
+
+- `for`문을 지원하는 iterator의 조건
+
+  - 멤버함수나 확장함수 중에 `iterator()`, `next()`, `hasNext()`가 `operator`로 구현되어 있어야함
+
+    ```kotlin
+    fun main(args: Array<String>) {
+      val myData = MyData()
+      myData.iterator()
+      for (item in myData) {
+        print(item)
+      }
+    }
+    
+    class MyIterator {
+      val data = listOf(1, 2, 3, 4, 5)
+      var idx = 0
+      
+      operator fun hasNext() : Boolean {
+        return data.size > idx
+      }
+      
+      operator fun next() : Int {
+        return data[idx++]
+      }
+    }
+    
+    class MyData {
+      operator fun iterator(): MyIterator {
+        return MyIterator()
+      }
+    }
+    ```
+
+- 배열이나 리스트를 반복할 때, index를 이용하고 싶다면, `indices`를 이용하면 됨
+
+  ```kotlin
+  val array = arrayOf("a", "b", "c")
+  
+  for (i in array.indices) {
+    println("$i: ${array[i]}")
+  }
+  ```
+
+- `withIndex()`를 사용할 수도 있음
+
+  ```kotlin
+  val array = arrayOf("a", "b", "c")
+  
+  for ((index, value) in array.withIndex()) {
+    println("$index: ${value}")
+  }
+  ```
+
+
+
+### `while`
+
+- `while`, `do-while`문은 Java와 거의 같음
+
+  ```kotlin
+  while (x > 0) {
+    x--
+  }
+  ```
+
+- `do-while`문에서 body의 지역 변수를 `do-while`의 조건문이 참조할 수 있음
+
+  ```kotlin
+  do {
+    val y = retrieveData()
+  } while (y != null)
+  ```
+
+  
+
+## Package
+
+### 패키지
+
+- 소스 파일은 패키지 선언으로 시작 됨
+- 모든 콘텐츠(클래스, 함수, ...)는 패키지에 포함 됨
+- 패키지를 명시하지 않으면 이름이 없는 기본 패키지에 포함됨
+
+
+
+### 기본 패키지
+
+- 기본으로 import 되는 패키지가 있음
+
+  ```kotlin
+  kotlin.*
+  kotlin.annotation.*
+  kotlin.collections.*
+  kotlin.comparisons.*
+  ...
+  ```
+
+- 플랫폼 별로 import 되는 패키지가 있음
+
+  ```kotlin
+  JVM:
+  	java.lang.*
+  	kotlin.jvm.*
+  JS:
+  	kotlin.js.*
+  ```
+
+
+
+### Imports
+
+- 기본으로 포함되는 패키지 외에도, 필요한 패키지들을 직접 import할 수 있음
+
+  ```kotlin
+  import foo.Bar
+  import foo.*
+  
+  // 이름 충돌 시 as로 로컬 리네임 가능
+  import bar.Bar as bBar
+  ```
+
+  
+
+## Return and Jumps
+
+### 3가지  Jump 표현식
+
+- `return`: 함수나 익명 함수에서 반환
+
+  ```kotlin
+  fun sum(a: Int, b: Int): Int {
+    println("a: $a, b: $b")
+    return a + b
+  }
+  ```
+
+- `break`: 루프를 종료 시킴
+
+  ```kotlin
+  for (x in 1..10) {
+    if (x > 2) {
+      break
+    }
+    println("x: $x")
+  }
+  ```
+
+- `continue`: 루프의 다음 단계로 진행
+
+  ```kotlin
+  for (x in 1..10) {
+    if (x < 2) {
+      continue
+    }
+    println("x: $x")
+  }
+  ```
+
+
+
+### Label
+
+- Label로 `break`, `continue` 가능
+
+  ```kotlin
+  loop@ for (i in 1..10) {
+    for (j in 1..10) {
+      println("j: $j")
+      if (i + j > 12) {
+        break@loop
+      }
+    }
+  }
+  
+  loop@ for (i in 1..10) {
+    for (j in 1..10) {
+      if (j > 2) {
+        continue@loop
+      }
+      println("j: $j")
+    }
+  }
+  ```
+
+- Lable로 `return`
+
+  - 코틀린에서 중첩될 수 있는 요소들
+
+    - 함수 리터럴
+    - 지역함수
+    - 객체 표현식
+    - 함수
+
+    ```kotlin
+    fun foo() {
+      var ints = listOf(0, 1, 2, 3)
+      
+      ints.forEach(
+      fun(value: Int) {
+        if (value == 1) return
+        print(value)
+      })
+    }
+    ```
+
+ - 람다식 `return` 주의 사항
+
+   - 람다식에서 `return`시 nearest enclosing 함수가  `return`됨
+
+     ```kotlin
+     fun foo() {
+       var ints = listOf(0, 1, 2, 3)
+       ints.forEach {
+         if (it == 1) return
+         print(it)
+       }
+       print("End")
+     }
+     // 0만 출력
+     ```
+
+   - 람다식에 대해서만  `return` 하려면, label을 이용해야 함
+
+     ```kotlin
+     fun foo() {
+       var ints = listOf(0, 1, 2, 3)
+       ints.forEach label@ {
+         if (it == 1) return@label
+         print(it)
+       }
+       print("End")
+     }
+     ```
+
+     - 암시적 레이블 쓰면 더 편함
+
+       ```kotlin
+       fun foo() {
+         var ints = listOf(0, 1, 2, 3)
+         ints.forEach {
+           if (it == 1) return@forEach
+           print(it)
+         }
+         print("End")
+       }
+       ```
+
+   - 레이블  `return`시 값을 반환할 경우
+
+     ```kotlin
+     fun foo(): List<String> {
+       var ints = listOf(0, 1, 2, 3)
+       var result = ints.map {
+         if (it == 0) {
+           return@map "zero"
+         }
+         "number $it"
+       }
+       return result
+     }
+     ```
+
+     
+
+
+
+## Classes and Inheritance
+
+### 클래스
+
+- 클래스는  `class` 키워드로 선언함
+
+  ```kotlin
+  class Invoice(data: Int) {
+  }
+  ```
+
+- 헤더와 바디는 옵션이고, 바디가 없으면 중괄호 생략 가능
+
+- 기본 생성자
+
+  - 클래스 별로 1개만 가질 수 있음
+
+  - 클래스 헤더의 일부
+
+  - 클래스 이름 뒤에 작성
+
+    ```kotlin
+    class Person constructor(firstName: String) {
+    }
+    ```
+
+  - 어노테이션이나 접근 지정자가 없을 때는, `constructor` 키워드 생략 가능
+
+    ```kotlin
+    class Person(firstName: String) {
+    }
+    ```
+
+  - 기본 생성자는 코드를 가질 수 없음
+
+    - 초기화는 `init` 블록 안에서 작성해야 함
+
+  - 기본 생성자의 파라미터는  `init` 블록 내부에서 사용 가능함
+
+    ```kotlin
+    fun main(args: Array<String>) {
+      val obj = Customer("kotlin")
+      println(obj)
+    }
+    
+    class Customer(name: String) {
+      init {
+        println("name: $name")
+      }
+    }
+    ```
+
+  - 기본 생성자의 파라미터는 프로퍼티 초기화 선언에도 사용 가능
+
+    ```kotlin
+    class Customer(name: String) {
+      val customerKey = name.toUpperCase()
+    }
+    ```
+
+  - 프로퍼티 선언 및 초기화는 기본 생성자에서 간결한 구문으로 사용 가능
+
+    ```kotlin
+    class Person(val firstname: String, val lastName: String)
+    ```
+
+  - 기본 생성자에 어노테이션 접근 지정자 등이 있는 경우 `constructor` 키워드가 필요함
+
+    ```kotlin
+    class Customer pulbic @Inject constructor(name: String) { ... }
+    ```
+
+- 보조 생성자
+
+  - 클래스 별로 여러 개 가질 수 있음
+
+  - `constructor` 키워드로 선언
+
+    ```kotlin
+    class Person {
+      constructor(parent: Person) {
+        parent.children.add(this)
+      }
+    }
+    ```
+
+  - 클래스가 기본 생성자를 가지고 있다면, 각각의 보조 생성자들은 기본 생성자를 직접적 or 간접적으로 위임해주어야 함
+
+  - `this` 키워드 사용
+
+    ```kotlin
+    class Person(val name: String) {
+      // 직접적 위임
+      constructor(name: String, parent: Person): this(name) {
+        /* ... */
+      }
+      
+      // 간접적 위임
+      constructor(): this("kotlin", Person()) {
+        /* ... */
+      }
+    }
+    ```
+
+- 생성된(generated) 기본 생성자
+
+  - 클래스에 기본 생성자나 보조 생자를 선언하지 않으면, 생성된 기본 생성자가 만들어짐
+
+  - generated primary constructor
+
+    - 매개 변수가 없음
+    - 가시성이  `public`임
+
+  - 만약 생성된 기본 생성자의 가시성이  `public`이 아니어야 한다면, 다른 가시성을 가진 빈 기본 생성자를 선언해야 함
+
+    ```kotlin
+    class DontCreateMe private constructor() {
+    }
+    ```
+
+- 인스턴스 생성
+
+  - kotlin에는 `new` 키워드가 없음
+
+  - 객체를 생성하려면 생성자를 일반 함수처럼 호출하면 됨
+
+    ```kotlin
+    val invoice = Invoice()
+    val customer = Customer("Joe Smith")
+    ```
+
+- 클래스 멤버
+  - 클래스는 다음의 것들을 포함할 수 있음
+    - Constructors and initializer blocks
+    - Functions
+    - Properties
+    - Nested and Inner Classes
+    - Object Declarations
 
