@@ -981,5 +981,417 @@ val bytes = 0b11010010_01101001_10010100_10010010
 
 
 
-# Next
+### Inheritance
+
+- 상속
+
+  - 코틀린의 최상위 클래스는  `Any`
+
+  - 클래스에 상위타입을 선언하지 않으면 `Any`가 상속됨
+
+    ```kotlin
+    class Example1 // 암시적인 Any 상속
+    class Example2: Any // 명시적인 Any 상속
+    ```
+
+  - `Any`는 `java.lang.Object`와는 다른 클래스임
+
+    - `equals()`, `hashCode()`, `toString`만 가지고 있음
+
+  - 명시적으로 상위타입을 선언하려면 클래스 헤더의 콜론 뒤에 상위 타입을 선언하면 됨
+
+    ```kotlin
+    open class Base(p: Int)
+    
+    class Derived(p: Int): Base(p)
+    ```
+
+  - 파생 클래스에 기본 생성자가 있으면, 파생클래스의 기본 생성자에서 상위 타입의 생성자를 호출해서 초기화할 수 있음
+
+  - 파생 클레스에 기본 생성자가 없으면, 각각의 보조 생성자에서 상위 타입을  `super` 키워드를 이용해서 초기화 해주거나 다른 생성자에게 상위 타입을 초기화할 수 있게 위임해주어야 함
+
+    ```kotlin
+    class MyView: View {
+      constructor(): super(1)
+      
+      constructor(ctx: Int): this()
+      
+      constructor(ctx: Int, attrs: Int): super(ctx, attrs)
+    }
+    ```
+
+  - `open` 어노테이션은 Java의 `final`과 반대임
+  - `open class`는 다른 클래스가 상속할 수 있음
+  - 기본적으로 kotlindㅢ 모든  `class`는 `final`임
+
+- 메서드 오버라이딩
+
+  - 오버라이딩 될 메서드: `open` 어노테이션 필요
+
+  - 오버라이딩 된 메서드: `override` 어노테이션 필요
+
+    ```kotlin
+    open class Base {
+      open fun v() {}
+      fun nv() {}
+    }
+    
+    class Derived: Base {
+      override fun v() {}
+    }
+    ```
+
+- 프로퍼티 오버라이딩
+
+  - 메서드 오버라이딩과 유사한 방식으로 오버라이딩 가능
+
+    ```kotlin
+    open class Foo {
+      open val x: Int = ...
+    }
+    
+    class Bar: Foo {
+      override val x: Int = ...
+    }
+    ```
+
+- 오버라이딩 규칙
+
+  - 같은 멤버에 대한 중복된 구현을 상속 받은 경우, 상속 받은 클래스는 해당 멤버를 오버라이딩하고 자체 구현을 제공해야 함
+
+  - `super` + <클래스명>을 통해서 상위 클래스를 호출할 수 있음
+
+    ```kotlin
+    open class AA() {
+      open fun f() {
+        println("A")
+      }
+    }
+    
+    interface BB {
+      open fun f() {
+        println("B")
+      }
+    }
+    
+    class CC: AA(), BB {
+      ovveridde fun f() {
+        super<AA>.f()
+        super<BB>.f()
+      }
+    }
+    ```
+
+- 추상 클래스
+
+  - `abstract` 멤버는 구현이 없음
+
+  - `abstract` 클래스나 멤버는 `open`이 필요 없음
+
+    ```kotlin
+    abstract class AbsClass {
+      abstract fun f()
+    }
+    
+    class MyClass(): AbsClass() {
+      override fun f() {}
+    }
+    ```
+
+    
+
+## Properties and Fields
+
+- 프로퍼티 선언
+
+  - 코틀린 클래스는 프로퍼티를 가질 수 있음
+
+    ```kotlin
+    class Address {
+      var name: String = "Kotlin"
+      val city: String = "Seoul"
+    }
+    ```
+
+  - 프로퍼티 사용은 자바의 필드를 사용하듯이 하면 됨
+
+    ```kotlin
+    fun copyAddress(address: Address): Address {
+      val result = Address()
+      result.name = address.name
+      
+      return result
+    }
+    ```
+
+- 프로퍼티 문법
+
+  ```kotlin
+  var <propertyName>[: <PropertyType>] [=<property_initializer>]
+  	[<getter>]
+  	[<setter>]
+  ```
+
+  - 생략 가능한 옵션
+    - PropertyType
+    - property_initializer
+    - getter
+    - setter
+
+- `var`(mutable) 프로퍼티
+
+  ```kotlin
+  class Address {
+    var initialized = 1
+    
+    // 에러 발생
+    // default getter와 setter 사용한 경우
+    // 명시적 초기화 필요
+    var allByDefault: Int? 
+  }
+  ```
+
+- val(immutable) 프로퍼티
+
+  ```kotlin
+  class Address {
+    val initialized = 1
+    
+    // 에러 발생
+    // default getter와 setter 사용한 경우
+    // 명시적 초기화 필요
+    var allByDefault: Int? 
+  }
+  ```
+
+- Custom accessors (`getter`, `setter`)
+
+  - 프로퍼티 선언 내부에, 일반 함수처럼 선언할 수 있음
+
+    ```kotlin
+    //getter
+    val isEmpty: Boolean
+    	get() = this.size == 0
+    
+    // setter
+    // 관습적으로 setter의 파라미터 이름은 value
+    var stringRepresentation: String
+    	get() = this.toString()
+      set(value) {
+        setDataFromString(value)
+      }
+    ```
+
+- 타입 생략
+
+  - kotlin 1.1 이후로는  `getter`를 통해 타입을 추론할 수 있는 경우, 프로퍼티 타입 생략 가능
+
+    ```kotlin
+    val isEmpty
+    	get() = this.size == 0
+    ```
+
+- accessor에 가시성 변경 또는 어노테이션이 필요한 경우 기본  accessor의 수정 없이 body 없는  accessor를 통해 정의 가능
+
+  ```kotlin
+  var setterVisibility: String = "abc"
+  	private set
+  var setterWithAnnotation: Any? = null
+  	@Inject set
+  ```
+
+  - body를 작성해도 무관
+
+- Backing Fields
+
+  - kotlin의 클래스는 `field`를 가질 수 없음
+
+  - `field`라는 식별자를 통해 접근할 수 있는 automatic backing field를 제공함
+
+  - `field`는 프로퍼티의  accessor에서만 사용 가능
+
+    ```kotlin
+    var counter = 0
+    	set(value) {
+        if (value >= 0) field = value
+      }
+    ```
+
+- Backing Fields 생성 조건
+
+  - accessor 중 1개라도 기본 구현을 사용하는 경우
+
+  - custom accessor에서 `field` 식별자를 참조하는 경우
+
+    ```kotlin
+    var counter = 0
+    	set(value) {
+        if (value >= 0) field = value
+      }
+    ```
+
+  - 아래의 경우 backing field를 생성하지 않음
+
+    ```kotlin
+    val isEmpty: Boolean
+    	get() = this.size == 0
+    ```
+
+- Implicit backing field 방식이 맞지 않는 경우에는 backing property 이용
+
+  ```kotlin
+  private var _table: Map<String, Int>? = null
+  
+  public val table: Map<String, Int>
+  	get() {
+      if (_table == null) {
+        _table = HashMap()
+      }
+      return _table ?: throw AssertionError("null")
+    }
+  ```
+
+- Complie-Time Constants
+
+  - const modifier를 이용하면 컴파일 타임 상수를 만들 수 잇음
+
+    - 이런 프로퍼티는 어노테이션에서도 사용 가능
+
+  - 조건
+
+    - top-level
+
+    - object의 멤버
+
+    - String이나 primitive 타입으로 초기화된 경우
+
+      ```kotlin
+      const val SUBSYSTEM_DEPRECATED: String = "This subsystem is deprecated"
+      
+      @Deprecated(SUBSYSTEM_DEPRECATED)
+      fun foo() { ... }
+      ```
+
+- Late-Initialized Properties
+
+  - 일반적으로 프로퍼티는 non-null 타입으로 선언됨
+
+  - 간혹 non-null 타입 프로퍼티를 사용하고 싶지마느 생성자에서 초기화 해줄 수 없는 경우가 있음
+
+    - Dependency Injection
+
+    - Unit test의 setup 메서드
+
+      ```kotlin
+      public class MyTest {
+        lateinit var subject: TestSubject
+        
+        @SetUp fun setup() {
+          subject = TestSubejct()
+        }
+        
+        @Test fun test() {
+          subejct.method()
+        }
+      }
+      ```
+
+  - 조건
+    - 클래스 바디에서 선언된 프로퍼티
+      - 기본 생성자에서 선언된 프로퍼티는 안 됨
+    - `var` 프로퍼티만 가능
+    - custom accessor가 없어야 함
+    - non-null 타입이어야 함
+    - primitive 타입이면 안됨
+
+
+
+## Data, Nested Class
+
+### Data 클래스
+
+- 데이터는 보유하지만 아무것도 하지 않는 클래스
+
+  ```kotlin
+  data class User(val name: String, val age: Int)
+  ```
+
+- 기본 생성자에서 선언된 속성을 통해, 아래의 기능들을 컴파일러가 자동으로 생성해 줌
+
+  - `equals()`, `hashCode()`, `copy()`, `toString()`, `componentN`
+
+- 명시적으로 정의해주는 경우에는 자동으로 생성해주지 않음
+
+### 의미 있는  Data 클래스의 조건
+
+- 기본 생성자에 1개 이상의 파라미터
+- 기본 생성자의 파라미터가 `var`, `val`로 선언
+- Data 클래스는 `abstract`, `open`, `sealed`, `inner`가 안됨
+- 1.1이후로 Data 클래스 interface 구현 가능
+
+###  기본 값
+
+- 파라미터 없는 생성자가 필요한 경우 모든 프로퍼티에 기본 값을 설정해 주면 됨
+
+  ```kotlin
+  data class User(val name: String = "", val age: Int = 0)
+  ```
+
+### 복사
+
+- 객체의 기존 값들은 유지하고, 일부 값만 고쳐서 새로운 객체를 만들고 싶은 경우
+
+- Data 클래스에 컴파일러가  `copy`를 만들어 주기 때문에 바로 호출해서 사용하면 됨
+
+  ```kotlin
+  val jack = User(name = "Jack", age = 1)
+  val olderJack = jack.copy(age = 2)
+  ```
+
+### Destructuring Declarations
+
+- Data 클래스는 Destructuring Declarations 사용 가능
+
+- 컴파일러가  `componentN` 함수를 자동으로 만들어 주기 때문
+
+  ```kotlin
+  val jane = User("Jane", 35)
+  val (name, age) = jane
+  ```
+
+### Nested Classes
+
+- 중첩 클래스
+
+  - 클래스는 다른 클래스에 중첩될 수 있음
+
+    ```kotlin
+    class Outer {
+      private val bar: Int = 1
+      
+      class Nested {
+        fun foo() = 2
+      }
+    }
+    
+    val demo = Outer.Nested().foo()
+    ```
+
+- 내부 클래스
+
+  - 클래스에  `inner`를 표기하면 바깥쪽 클래스 멤버에 접근할 수 있음
+
+    ```kotlin
+    class Outer {
+      private val bar: Int = 1
+      
+    	inner class Inner {
+        fun foo() = bar
+      }
+    }
+    
+    val demo = Outer.Nested().foo()
+    ```
+
+
 
