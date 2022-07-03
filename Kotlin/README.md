@@ -1022,7 +1022,7 @@ val bytes = 0b11010010_01101001_10010100_10010010
 
   - `open` 어노테이션은 Java의 `final`과 반대임
   - `open class`는 다른 클래스가 상속할 수 있음
-  - 기본적으로 kotlindㅢ 모든  `class`는 `final`임
+  - 기본적으로 kotlin의 모든  `class`는 `final`임
 
 - 메서드 오버라이딩
 
